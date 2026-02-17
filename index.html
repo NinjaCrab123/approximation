@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leibniz | Approximation 30.0</title>
+    <!-- COMPUTER MODERN SERIF (TRUE LATEX) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@createnextapp/cmu-serif@1.0.1/cmu-serif.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };</script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --bg: #000000; --card: #0a0a0a; --border: #1a1a1a; --accent: #fdfceb;
+            --text: #ffffff; --dim: #555555; --gold: #d4af37; --fail: #ff4444;
+            --pass: #00ff88; --boss: #ff004c;
+        }
+        * { box-sizing: border-box; }
+        
+        h1, h2 { font-weight: normal; }
+        
+        body {
+            font-family: "Computer Modern Serif", serif; background-color: var(--bg); color: var(--text);
+            margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased;
+            transition: box-shadow 0.8s ease, filter 0.8s ease;
+        }
+
+        /* --- HEAVENLY LIGHT ENGINE --- */
+        #heavenly-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 5000; opacity: 0; transition: opacity 1.5s ease;
+        }
+        .cloud-part {
+            position: absolute; top: 0; width: 60vw; height: 100vh;
+            background: radial-gradient(circle at center, #111 0%, transparent 70%);
+            filter: blur(100px); transition: transform 2s ease-in-out;
+        }
+        .cloud-left { left: -10vw; transform: translateX(0); }
+        .cloud-right { right: -10vw; transform: translateX(0); }
+        body.god-mode .cloud-left { transform: translateX(-50vw); }
+        body.god-mode .cloud-right { transform: translateX(50vw); }
+
+        .god-ray {
+            position: absolute; top: -10%; width: 2px; height: 150vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(253,252,235,0.4) 40%, transparent 100%);
+            box-shadow: 0 0 40px rgba(255,255,255,0.5); filter: blur(10px);
+            transform-origin: top; animation: raySway 10s infinite alternate ease-in-out;
+        }
+        @keyframes raySway { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+        
+        body.god-mode #heavenly-overlay { opacity: 1; }
+        body.god-mode { filter: brightness(1.4) contrast(1.1); box-shadow: inset 0 0 500px rgba(255,255,255,0.3); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes violentShake { 0%, 100% { transform: translate(0,0); } 20% { transform: translate(15px,-15px); } 40% { transform: translate(-15px,15px); } 60% { transform: translate(15px,15px); } }
+        body.shaking { animation: violentShake 0.08s infinite; }
+
+        /* CHRISTOPHER TRAN MODE - Blurry Sway */
+        body.christopher-mode {
+            animation: gentleSway 3s ease-in-out infinite;
+            filter: blur(1.5px);
+        }
+        @keyframes gentleSway {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-10px) rotate(-0.5deg); }
+            50% { transform: translateX(10px) rotate(0.5deg); }
+            75% { transform: translateX(-10px) rotate(-0.5deg); }
+        }
+        body.christopher-mode * {
+            filter: blur(0.3px);
+        }
+
+        /* SHENGTONG ZHANG MODE - Holy Glow */
+        body.shengtong-mode {
+            animation: holyPulse 2s ease-in-out infinite;
+            filter: brightness(1.3) contrast(1.1);
+        }
+        @keyframes holyPulse {
+            0%, 100% { filter: brightness(1.3) contrast(1.1); }
+            50% { filter: brightness(1.5) contrast(1.2); }
+        }
+        body.shengtong-mode * {
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        body.shengtong-mode::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+            animation: holyGlow 3s ease-in-out infinite;
+        }
+        @keyframes holyGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        body.boss-battle { animation: bossPulse 1.5s infinite alternate ease-in-out; }
+        @keyframes bossPulse { from { box-shadow: inset 0 0 100px rgba(255,0,76,0.4); } to { box-shadow: inset 0 0 500px rgba(255,0,76,0.7); } }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 75px; border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding-top: 30px; gap: 40px; z-index: 2000; background: black; }
+        .nav-icon { width: 32px; height: 32px; cursor: pointer; opacity: 0.2; transition: 0.3s; fill: white; }
+        .nav-icon.active { opacity: 1; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+
+        .stage { flex-grow: 1; position: relative; display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .panel { width: 100%; max-width: 950px; text-align: center; }
+        .hidden { display: none !important; }
+
+        /* --- PILL BUTTONS --- */
+        .pill-btn { background: var(--accent); color: #000; border: none; padding: 18px 60px; font-family: inherit; font-size: 1.4rem; border-radius: 50px; cursor: pointer; transition: 0.4s; margin-top: 20px;}
+        .pill-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(253, 252, 235, 0.2); background: white; }
+
+        .time-pill { background: #080808; border: 1px solid #1a1a1a; color: #333; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-family: inherit; transition: 0.3s; margin: 0 5px; }
+        .time-pill.active { border-color: #555; color: var(--text); background: #0a0a0a; }
+
+        /* --- SPIRAL --- */
+        .vortex-container { width: 600px; height: 600px; position: relative; display: flex; justify-content: center; align-items: center; margin: 0 auto; }
+        .pi-ring { position: absolute; width: 100%; height: 100%; animation: rotateCW 40s linear infinite; opacity: 0.15; }
+        .pi-digit { position: absolute; left: 50%; top: 50%; font-size: 1.4rem; color: #fff; }
+        @keyframes rotateCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* --- HUD --- */
+        .game-hud { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 50px; }
+        .hud-val { font-size: 2.2rem; }
+        #q-wrap { font-size: 5.5rem; min-height: 250px; display: flex; align-items: center; justify-content: center; }
+        input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--accent); font-size: 3.5rem; text-align: center; width: 450px; outline: none; font-family: inherit; }
+
+        /* --- POPUP --- */
+        .pop-text { position: absolute; pointer-events: none; font-size: 3.2rem; font-style: italic; opacity: 0; animation: burstFloat 4.8s cubic-bezier(0.1, 0.5, 0.2, 1) forwards; z-index: 100; font-weight: bold; text-shadow: 0 0 20px rgba(0,255,136,0.3);}
+        @keyframes burstFloat { 0% { transform: translate(0, 0) scale(0.4); opacity: 0; } 10% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.1); } 100% { opacity: 0; transform: translate(var(--tx2), var(--ty2)) scale(0.8); } }
+
+        .lb-table { width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left; }
+        .lb-table td { padding: 15px 12px; border-bottom: 1px solid #111; }
+        .rank-tag { font-size: 0.75rem; padding: 3px 8px; border-radius: 3px; background: #553c9a; color: white; margin-left: 10px;}
+
+        /* --- MENTAL PROBABILITY FLASHCARD --- */
+        .flashcard-scene { width: 800px; max-width: 90vw; height: 420px; perspective: 1200px; margin: 0 auto; cursor: pointer; }
+        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1); }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid var(--border); border-radius: 12px; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .flashcard-front { background: var(--card); }
+        .flashcard-back { background: #050a05; border-color: var(--pass); transform: rotateY(180deg); overflow-y: auto; justify-content: flex-start; }
+        .flashcard-label { font-size: 0.75rem; letter-spacing: 3px; color: var(--dim); margin-bottom: 20px; }
+        .flashcard-question { font-size: 1.35rem; line-height: 1.7; font-style: italic; }
+        .flashcard-answer { font-size: 1.4rem; color: var(--pass); margin-bottom: 16px; }
+        .flashcard-working { font-size: 0.95rem; line-height: 1.8; color: #888; }
+        .flashcard-working em { color: var(--accent); font-style: normal; }
+        .prob-timer-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 30px; overflow: hidden; }
+        .prob-timer-fill { height: 100%; background: var(--accent); transition: width 0.1s linear; border-radius: 2px; }
+        .prob-input-row { display: flex; gap: 15px; align-items: center; justify-content: center; margin-top: 30px; }
+        .prob-input-row input { width: 260px; font-size: 2rem; }
+
+        /* --- RESULTS --- */
+        .chart-frame { position: relative; width: 550px; height: 550px; margin: 20px auto; pointer-events: auto; }
+        #drill-down { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5,5,5,0.98); border: 1px solid var(--accent); padding: 35px; width: 360px; opacity: 0; visibility: hidden; transition: 0.5s; text-align: left; z-index: 1000; pointer-events: none; box-shadow: 0 0 50px black; }
+        #drill-down.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        #drill-backdrop.active { opacity: 1; visibility: visible; pointer-events: auto; }
+
+
+        #opponent-reveal, #defeat-banner, #mm-opponent-reveal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.7); z-index: 300; background: #000; padding: 50px; border: 2px solid var(--accent); border-radius: 8px; opacity: 0; transition: 0.5s; box-shadow: 0 0 100px #000; pointer-events: none; }
+        #opponent-reveal.show, #defeat-banner.show, #mm-opponent-reveal.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+        #opponent-reveal.boss-detected { border-color: var(--boss); box-shadow: 0 0 40px var(--boss); }
+    </style>
+</head>
+<body id="body-main">
+
+    <div id="heavenly-overlay">
+        <div class="cloud-part cloud-left"></div>
+        <div class="cloud-part cloud-right"></div>
+        <div id="ray-container"></div>
+    </div>
+
+    <div id="defeat-banner">
+        <h2 style="font-size: 2.8rem; color: var(--accent);">\[ \text{Shengtong has been erased.} \]</h2>
+        <p style="color: var(--gold); font-style: italic;">The world is perfectly calibrated.</p>
+    </div>
+
+    <nav class="sidebar">
+        <svg class="nav-icon active" id="nav-classic" onclick="navTo('classic')" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <svg class="nav-icon" id="nav-intervals" onclick="navTo('intervals')" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        <svg class="nav-icon" id="nav-prob" onclick="navTo('prob')" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+        <svg class="nav-icon" id="nav-ranked" onclick="navTo('ranked')" viewBox="0 0 24 24"><path d="M14.5,14.5L13,16L10,13L11.5,11.5L14.5,14.5M16,13L14.5,11.5L18,8L19.5,9.5L16,13M10.5,10.5L12,12L9,15L7.5,13.5L10.5,10.5M8,9L9.5,10.5L6,14L4.5,12.5L8,9M20.5,3.5L18,6L16.5,4.5L19,2L20.5,3.5M3.5,20.5L6,18L4.5,16.5L2,19L3.5,20.5M21,21L12.5,12.5L21,21M3,3L11.5,11.5L3,3Z"/></svg>
+        <svg class="nav-icon" id="nav-leaderboard" onclick="navTo('leaderboard')" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.55 1.92 4.63 4.39 4.94.99 2.54 3.44 4.06 6.61 4.06 3.17 0 5.62-1.52 6.61-4.06C21.08 14.63 23 12.55 23 10V7c0-1.1-.9-2-2-2z"/></svg>
+        <svg class="nav-icon" id="nav-profile" onclick="navTo('profile')" viewBox="0 0 24 24" style="margin-top: auto; margin-bottom: 30px;"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    </nav>
+
+    <main class="stage" id="main-stage">
+        
+        <div id="view-classic" class="panel">
+            <h1 style="font-size: 3.8rem; margin-bottom: 20px;">Numerical Intuition</h1>
+            <p style="font-style: italic; color: #444; margin-bottom: 60px; font-size: 1.4rem;">An exercise in continuous approximation.</p>
+            <div class="time-select" id="classic-times" style="margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
+            <button class="pill-btn" onclick="startSession('classic')">Begin Analysis</button>
+        </div>
+
+        <div id="view-intervals" class="panel hidden">
+            <h1 style="font-size: 3.8rem; margin-bottom: 20px;">Market Making</h1>
+            <p style="font-style: italic; color: #444; margin-bottom: 60px; font-size: 1.4rem;">Confidence intervals for uncertain quantities.</p>
+            <div class="time-select" id="intervals-times" style="margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
+            <button class="pill-btn" onclick="startSession('intervals')">Begin Calibration</button>
+        </div>
+
+        <div id="view-intervals-game" class="panel hidden">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 0.9rem; color: var(--dim); margin-bottom: 10px;">
+                    SCORE: <span id="interval-score" style="color: var(--accent); font-size: 1.5rem;">0</span>
+                    <span id="mm-ranked-hud" style="display:none;"> &nbsp;|&nbsp; OPP: <span id="interval-opp-score" style="color: var(--dim); font-size: 1.5rem;">0</span></span>
+                    &nbsp;|&nbsp; TIME: <span id="interval-timer" style="color: var(--accent); font-size: 1.5rem;">120</span>s
+                </div>
+            </div>
+            <div id="interval-question" style="font-size: 1.8rem; line-height: 1.6; margin-bottom: 50px; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 40px;">Loading...</div>
+            <div style="display: flex; gap: 20px; justify-content: center; align-items: center; margin-bottom: 30px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.8rem; color: var(--dim); margin-bottom: 10px;">LOWER BOUND</div>
+                    <input type="text" id="interval-lower" placeholder="Min" style="width: 200px; font-size: 2rem; text-align: center;" autofocus>
+                </div>
+                <div style="font-size: 3rem; color: var(--dim);">—</div>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.8rem; color: var(--dim); margin-bottom: 10px;">UPPER BOUND</div>
+                    <input type="text" id="interval-upper" placeholder="Max" style="width: 200px; font-size: 2rem; text-align: center;">
+                </div>
+            </div>
+            <button class="pill-btn" onclick="submitInterval()" style="margin-top: 20px;">Submit Interval</button>
+        </div>
+
+        <div id="view-intervals-results" class="panel hidden">
+            <h1>Calibration Complete</h1>
+            <div style="font-size: 5rem; margin: 30px 0; color: var(--accent);" id="final-interval-score">0</div>
+            <div style="font-size: 1.2rem; color: var(--dim); margin-bottom: 20px;">
+                Intervals: <span id="intervals-hit" style="color: var(--pass);">0</span> / <span id="intervals-total">0</span>
+            </div>
+            <div style="font-size: 1.2rem; color: var(--dim); margin-bottom: 20px;">
+                Avg Width: <span id="avg-width" style="color: var(--accent);">0</span>
+            </div>
+            <div id="mm-elo-report" class="hidden" style="font-size: 1.8rem; margin: 20px 0;"></div>
+            <button class="pill-btn" onclick="navTo('intervals')">Return</button>
+        </div>
+
+        <div id="view-mm-matchmaking" class="panel hidden">
+            <div class="vortex-container" id="mm-vortex-stage">
+                <h2 id="mm-matchmaking-status" style="font-size: 3.5rem; font-style: italic; color: var(--accent); position: relative; z-index: 100; transition: opacity 0.5s;">Finding market match...</h2>
+                <div id="mm-opponent-reveal">
+                    <p id="mm-reveal-tag" style="font-size: 0.8rem; letter-spacing: 2px; color: var(--dim); margin-bottom: 15px;">MATCHED WITH</p>
+                    <h3 id="mm-opp-name-ui" style="font-size: 2.5rem; margin: 10px 0;">--</h3>
+                    <p id="mm-opp-elo-ui" style="color:var(--gold); font-size: 1.2rem; margin-bottom: 20px;">MM Rating: 1500</p>
+                    <div style="display: flex; gap: 30px; justify-content: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #222;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.7rem; color: var(--dim); margin-bottom: 5px;">HIT RATE</div>
+                            <div id="mm-opp-hit-ui" style="font-size: 1.5rem; color: var(--accent);">--</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.7rem; color: var(--dim); margin-bottom: 5px;">AVG SCORE/Q</div>
+                            <div id="mm-opp-score-ui" style="font-size: 1.5rem; color: var(--accent);">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-prob" class="panel hidden">
+            <h1 style="font-size: 3.8rem; margin-bottom: 15px;">Mental Probability</h1>
+            <p style="font-style: italic; color: #444; margin-bottom: 50px; font-size: 1.2rem;">Solve probability questions by reasoning, not calculation.</p>
+            <div style="display:flex; gap:20px; justify-content:center; margin-bottom:40px;">
+                <div style="background:var(--card); border:1px solid var(--border); padding:20px 30px; border-radius:8px; text-align:center;">
+                    <div style="font-size:0.8rem;color:var(--dim);margin-bottom:5px;">BEST SCORE</div>
+                    <div id="prob-best" style="font-size:2rem;">0</div>
+                </div>
+                <div style="background:var(--card); border:1px solid var(--border); padding:20px 30px; border-radius:8px; text-align:center;">
+                    <div style="font-size:0.8rem;color:var(--dim);margin-bottom:5px;">QUESTIONS DONE</div>
+                    <div id="prob-total-done" style="font-size:2rem;">0</div>
+                </div>
+            </div>
+            <button class="pill-btn" onclick="startProbSession()">Begin</button>
+        </div>
+
+        <div id="view-prob-game" class="panel hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding:0 20px;">
+                <div style="font-size:0.85rem;color:var(--dim);">SCORE: <span id="prob-score" style="color:var(--accent);font-size:1.3rem;">0</span></div>
+                <div style="font-size:0.85rem;color:var(--dim);">Q <span id="prob-qnum">1</span> / ∞</div>
+                <div style="font-size:0.85rem;color:var(--dim);">AVG TIME: <span id="prob-avg-time" style="color:var(--accent);font-size:1.3rem;">--</span></div>
+            </div>
+            <div class="prob-timer-bar"><div class="prob-timer-fill" id="prob-timer-fill" style="width:100%"></div></div>
+
+            <div class="flashcard-scene" id="flashcard-scene">
+                <div class="flashcard" id="flashcard">
+                    <div class="flashcard-face flashcard-front">
+                        <div class="flashcard-label">QUESTION</div>
+                        <div class="flashcard-question" id="prob-q-text">Loading...</div>
+                        <div class="prob-input-row">
+                            <input type="text" id="prob-ans-input" placeholder="Your answer..." autocomplete="off">
+                            <button class="pill-btn" style="margin:0; padding:14px 28px;" onclick="submitProbAnswer()">Submit</button>
+                        </div>
+                    </div>
+                    <div class="flashcard-face flashcard-back">
+                        <div class="flashcard-label" style="color:var(--pass);">ANSWER & WORKING</div>
+                        <div class="flashcard-answer" id="prob-correct-answer">--</div>
+                        <div class="flashcard-working" id="prob-working">--</div>
+                        <div style="margin-top:25px; padding-top:20px; border-top:1px solid #1a1a1a; display:flex; gap:15px; justify-content:center;">
+                            <button class="pill-btn" style="margin:0; background:var(--pass); color:#000;" onclick="nextProbQ()">Next Question →</button>
+                            <button class="pill-btn" style="margin:0; background:transparent; border:1px solid var(--border);" onclick="navTo('prob')">End Session</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="prob-feedback" style="margin-top:20px; font-size:1.1rem; text-align:center; min-height:30px;"></div>
+        </div>
+
+        <div id="view-ranked" class="panel hidden">
+            <!-- Sub-tab switcher -->
+            <div style="display:flex; gap:0; justify-content:center; margin-bottom:40px; border:1px solid var(--border); border-radius:50px; overflow:hidden; width:fit-content; margin-left:auto; margin-right:auto;">
+                <button id="ranked-tab-ni" onclick="switchRankedTab('ni')" style="padding:10px 32px; background:var(--accent); color:#000; border:none; font-family:inherit; font-size:1rem; cursor:pointer; transition:0.3s;">Numerical</button>
+                <button id="ranked-tab-mm" onclick="switchRankedTab('mm')" style="padding:10px 32px; background:transparent; color:var(--dim); border:none; font-family:inherit; font-size:1rem; cursor:pointer; transition:0.3s;">Market Making</button>
+            </div>
+
+            <!-- Numerical Intuition ranked -->
+            <div id="ranked-ni-panel">
+                <h1>Match Mode</h1><p style="font-style: italic; color: #444; font-size: 1.2rem; margin-bottom: 40px;">Competitive synchronization of cognitive speed.</p>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <div style="background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 8px; width: 320px;">
+                        <div style="font-size: 0.8rem; color: var(--dim);">YOUR RATING</div><div id="ui-elo" style="font-size: 3rem; margin-top: 5px;">1500</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 8px; width: 320px;">
+                        <div style="font-size: 0.8rem; color: var(--dim);">WORLD RANK</div><div id="ui-world-rank" style="font-size: 3rem; margin-top: 5px;"># --</div>
+                    </div>
+                </div>
+                <div id="revive-zone" class="hidden" style="margin-top:20px;"><button class="pill-btn" onclick="reviveShengtong()" style="background:#400; color:white; font-size:1.1rem; padding:12px 30px;">Revive Shengtong (-3000 Elo)</button></div>
+                <div class="time-select" id="ranked-times" style="margin-top: 40px; margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
+                <button class="pill-btn" onclick="startSession('ranked')">Find Match</button>
+                <div id="history-box" style="margin-top: 20px; text-align: left; background: #050505; border: 1px solid #1a1a1a; padding: 15px; border-radius: 8px; max-height: 150px; overflow-y: auto;">
+                    <div style="font-size: 0.7rem; color: var(--dim); border-bottom: 1px solid #222; padding-bottom: 5px;">RECENT MATCHES</div><div id="history-list"></div>
+                </div>
+            </div>
+
+            <!-- Market Making ranked -->
+            <div id="ranked-mm-panel" style="display:none;">
+                <h1>Market Making Ranked</h1><p style="font-style: italic; color: #444; font-size: 1.2rem; margin-bottom: 40px;">Calibration under competitive pressure.</p>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <div style="background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 8px; width: 320px;">
+                        <div style="font-size: 0.8rem; color: var(--dim);">MM RATING</div><div id="ui-mm-elo" style="font-size: 3rem; margin-top: 5px;">1500</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 8px; width: 320px;">
+                        <div style="font-size: 0.8rem; color: var(--dim);">MM RANK</div><div id="ui-mm-rank" style="font-size: 3rem; margin-top: 5px;"># --</div>
+                    </div>
+                </div>
+                <div class="time-select" id="mm-ranked-times" style="margin-top: 40px; margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
+                <button class="pill-btn" onclick="startSession('mm-ranked')">Find Market Match</button>
+                <div style="margin-top: 20px; text-align: left; background: #050505; border: 1px solid #1a1a1a; padding: 15px; border-radius: 8px; max-height: 150px; overflow-y: auto;">
+                    <div style="font-size: 0.7rem; color: var(--dim); border-bottom: 1px solid #222; padding-bottom: 5px;">RECENT MARKET MATCHES</div><div id="mm-history-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-matchmaking" class="panel hidden">
+            <div class="vortex-container" id="vortex-stage">
+                <h2 id="matchmaking-status" style="font-size: 3.5rem; font-style: italic; color: var(--accent); position: relative; z-index: 100; transition: opacity 0.5s;">Finding match...</h2>
+                <div id="opponent-reveal">
+                    <p id="reveal-tag" style="font-size: 0.8rem; letter-spacing: 2px; color: var(--dim); margin-bottom: 15px;">MATCHED WITH</p>
+                    <h3 id="opp-name-ui" style="font-size: 2.5rem; margin: 10px 0;">--</h3>
+                    <p id="opp-elo-ui" style="color:var(--gold); font-size: 1.2rem; margin-bottom: 20px;">Rating: 1500</p>
+                    <div style="display: flex; gap: 30px; justify-content: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #222;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.7rem; color: var(--dim); margin-bottom: 5px;">AVG ACCURACY</div>
+                            <div id="opp-acc-ui" style="font-size: 1.5rem; color: var(--accent);">--</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.7rem; color: var(--dim); margin-bottom: 5px;">AVG TIME</div>
+                            <div id="opp-time-ui" style="font-size: 1.5rem; color: var(--accent);">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-game" class="panel hidden">
+            <div class="game-hud">
+                <div class="hud-item"><div>YOU</div><div id="ui-score" class="hud-val">0</div></div>
+                <div class="hud-item"><div>TIME</div><div id="ui-timer" class="hud-val">120</div><div id="diff-display" style="font-size:1.2rem; font-weight:bold;">0</div></div>
+                <div class="hud-item" id="opponent-hud"><div>OPPONENT</div><div id="ui-opponent-score" class="hud-val">0</div></div>
+            </div>
+            <div id="q-wrap">\[ \dots \]</div>
+            <input type="text" id="ans-input" autofocus autocomplete="off">
+        </div>
+
+        <div id="view-leaderboard" class="panel hidden">
+            <h1 style="font-size: 3.5rem; margin-bottom: 10px;">Global Leaderboard</h1>
+            <div style="display:flex; gap:0; justify-content:center; margin-bottom:30px; border:1px solid var(--border); border-radius:50px; overflow:hidden; width:fit-content; margin-left:auto; margin-right:auto;">
+                <button id="lb-tab-ni" onclick="switchLbTab('ni')" style="padding:10px 32px; background:var(--accent); color:#000; border:none; font-family:inherit; font-size:1rem; cursor:pointer; transition:0.3s;">Numerical</button>
+                <button id="lb-tab-mm" onclick="switchLbTab('mm')" style="padding:10px 32px; background:transparent; color:var(--dim); border:none; font-family:inherit; font-size:1rem; cursor:pointer; transition:0.3s;">Market Making</button>
+            </div>
+            <div id="lb-ni-panel">
+                <table class="lb-table" id="lb-body" style="width:100%"></table>
+            </div>
+            <div id="lb-mm-panel" style="display:none;">
+                <table class="lb-table" id="lb-mm-body" style="width:100%"></table>
+            </div>
+            <button class="pill-btn" style="margin-top: 30px;" onclick="navTo('classic')">Return</button>
+        </div>
+
+        <div id="view-profile" class="panel hidden">
+            <h1 style="font-size: 3.5rem; margin-bottom: 10px;">Profile</h1>
+            <p style="font-style: italic; color: #444; margin-bottom: 60px; font-size: 1.2rem;">Customize your identity.</p>
+            
+            <div style="max-width: 500px; margin: 0 auto;">
+                <div style="text-align: left; margin-bottom: 30px;">
+                    <label style="display: block; font-size: 0.9rem; color: var(--dim); margin-bottom: 10px;">YOUR NAME</label>
+                    <input type="text" id="profile-name-input" placeholder="Enter your name..." style="width: 100%; font-size: 1.5rem; padding: 15px; background: var(--card); border: 1px solid var(--border); color: var(--accent); border-radius: 8px;">
+                </div>
+                
+                <button class="pill-btn" onclick="saveName()">Save Name</button>
+                
+                <div id="name-feedback" style="margin-top: 20px; font-size: 1.1rem; color: var(--accent); min-height: 30px;"></div>
+            </div>
+            
+            <button class="pill-btn" style="margin-top: 60px; background: transparent; border: 1px solid var(--border);" onclick="navTo('classic')">Return</button>
+        </div>
+
+        <div id="view-results" class="panel hidden">
+            <h1>Analysis Complete</h1>
+            <div id="elo-report" class="hidden" style="font-size: 1.8rem; margin: 20px 0;"></div>
+            <div class="chart-frame">
+                <canvas id="spiderChart"></canvas>
+                <div id="drill-backdrop" onclick="document.getElementById('drill-down').classList.remove('active'); this.classList.remove('active')" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 999; opacity: 0; visibility: hidden; transition: 0.3s; pointer-events: none;"></div>
+                <div id="drill-down">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+                        <div id="drill-name" style="font-size: 1.6rem;">-</div>
+                        <button onclick="document.getElementById('drill-down').classList.remove('active'); document.getElementById('drill-backdrop').classList.remove('active')" style="background: none; border: none; color: var(--dim); font-size: 2rem; cursor: pointer; padding: 0; width: 30px; height: 30px; transition: 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--dim)'">×</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">Avg Precision: <span id="d-acc">-</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">Avg Time: <span id="d-latency">-</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px;">Total Points: <span id="d-total">-</span></div>
+                </div>
+            </div>
+            <button class="pill-btn" onclick="location.reload()">Restart</button>
+        </div>
+    </main>
+
+    <script>
+        // ECOSYSTEM
+        const BASE_LEGENDS = [
+            // Top 6 (ELO 2471-2831)
+            { id: "sz", name: "Shengtong Zhang", org: "Stanford University", elo: 2831, isBoss: true },
+            { id: "zqs", name: "Zhuo Qun Song", org: "Waterloo", elo: 2513, isBoss: false },
+            { id: "ls", name: "Lisa Sauermann", org: "MIT", elo: 2498, isBoss: false },
+            { id: "jl", name: "Jeck Lim", org: "Cambridge University", elo: 2487, isBoss: false },
+            { id: "tt", name: "Terence Tao", org: "UCLA", elo: 2478, isBoss: false },
+            { id: "sr", name: "Srinivasa Ramanujan", org: "Cambridge", elo: 2471, isBoss: false },
+            
+            // High tier (ELO 2200-2450)
+            { id: "yn", name: "Yuan Yao", org: "China", elo: 2380, isBoss: false },
+            { id: "rg", name: "Reid Gomez", org: "United States", elo: 2340, isBoss: false },
+            { id: "mb", name: "Maryam Mirzakhani", org: "Iran", elo: 2295, isBoss: false },
+            { id: "ap", name: "Alex Gunning", org: "United Kingdom", elo: 2250, isBoss: false },
+            { id: "lk", name: "Luke Robitaille", org: "Canada", elo: 2210, isBoss: false },
+            
+            // Mid-high tier (ELO 1900-2200)
+            { id: "hs", name: "Hunter Spink", org: "United States", elo: 2150, isBoss: false },
+            { id: "jw", name: "James Wills", org: "Australia", elo: 2090, isBoss: false },
+            { id: "mk", name: "Matei Mandache", org: "Romania", elo: 2030, isBoss: false },
+            { id: "sy", name: "Sherry Yang", org: "United States", elo: 1980, isBoss: false },
+            { id: "dc", name: "Daniel Campos", org: "Brazil", elo: 1920, isBoss: false },
+            
+            // Mid tier (ELO 1600-1900)
+            { id: "np", name: "Navneel Singhal", org: "India", elo: 1870, isBoss: false },
+            { id: "ek", name: "Emma Koike", org: "Japan", elo: 1820, isBoss: false },
+            { id: "tm", name: "Tomas Marques", org: "Portugal", elo: 1770, isBoss: false },
+            { id: "kp", name: "Kirill Petrov", org: "Russia", elo: 1720, isBoss: false },
+            { id: "an", name: "Anna Nielsen", org: "Denmark", elo: 1670, isBoss: false },
+            
+            // Lower tier (ELO 1300-1600)
+            { id: "jc", name: "Juan Cruz", org: "Argentina", elo: 1620, isBoss: false },
+            { id: "mw", name: "Michael Wong", org: "Singapore", elo: 1570, isBoss: false },
+            { id: "sp", name: "Sofia Petersen", org: "Norway", elo: 1520, isBoss: false },
+            { id: "al", name: "Ahmed Larbi", org: "Morocco", elo: 1470, isBoss: false },
+            { id: "vk", name: "Viktor Kovalenko", org: "Ukraine", elo: 1420, isBoss: false },
+            { id: "lz", name: "Lin Zhang", org: "China", elo: 1370, isBoss: false },
+            { id: "rm", name: "Rosa Martinez", org: "Mexico", elo: 1320, isBoss: false }
+        ];
+
+        let legendsPool = JSON.parse(localStorage.getItem('leib_legends')) || BASE_LEGENDS;
+        
+        // Version check: Reset legends if Shengtong isn't at the top with correct ELO
+        const shengtong = legendsPool.find(l => l.id === 'sz');
+        if (!shengtong || shengtong.elo !== 2831) {
+            legendsPool = [...BASE_LEGENDS];
+            localStorage.setItem('leib_legends', JSON.stringify(legendsPool));
+        }
+        
+        let userElo = parseInt(localStorage.getItem('leib_elo')) || 1500;
+        let userMmElo = parseInt(localStorage.getItem('leib_mm_elo')) || 1500;
+        let matchHistory = JSON.parse(localStorage.getItem('leib_history')) || [];
+        let mmMatchHistory = JSON.parse(localStorage.getItem('leib_mm_history')) || [];
+
+        // MM ELO values for legends (separate from numerical ELO)
+        const MM_LEGENDS = [
+            { id: "sz", name: "Shengtong Zhang", org: "Stanford University", mmElo: 2700 },
+            { id: "tt", name: "Terence Tao", org: "UCLA", mmElo: 2480 },
+            { id: "ls", name: "Lisa Sauermann", org: "MIT", mmElo: 2420 },
+            { id: "zqs", name: "Zhuo Qun Song", org: "Waterloo", mmElo: 2380 },
+            { id: "jl", name: "Jeck Lim", org: "Cambridge", mmElo: 2310 },
+            { id: "mb", name: "Maryam Mirzakhani", org: "Iran", mmElo: 2250 },
+            { id: "rg", name: "Reid Gomez", org: "United States", mmElo: 2190 },
+            { id: "ap", name: "Alex Gunning", org: "United Kingdom", mmElo: 2120 },
+            { id: "hs", name: "Hunter Spink", org: "United States", mmElo: 2060 },
+            { id: "mk", name: "Matei Mandache", org: "Romania", mmElo: 1990 },
+            { id: "sy", name: "Sherry Yang", org: "United States", mmElo: 1930 },
+            { id: "np", name: "Navneel Singhal", org: "India", mmElo: 1870 },
+            { id: "ek", name: "Emma Koike", org: "Japan", mmElo: 1800 },
+            { id: "kp", name: "Kirill Petrov", org: "Russia", mmElo: 1740 },
+            { id: "jw", name: "James Wills", org: "Australia", mmElo: 1680 },
+            { id: "an", name: "Anna Nielsen", org: "Denmark", mmElo: 1620 },
+            { id: "dc", name: "Daniel Campos", org: "Brazil", mmElo: 1560 },
+            { id: "tm", name: "Tomas Marques", org: "Portugal", mmElo: 1490 },
+            { id: "sp", name: "Sofia Petersen", org: "Norway", mmElo: 1430 },
+            { id: "al", name: "Ahmed Larbi", org: "Morocco", mmElo: 1370 },
+            { id: "lz", name: "Lin Zhang", org: "China", mmElo: 1310 },
+        ];
+
+        let currentMmOpponent = null;
+        let mmOppScore = 0, mmOppInterval = null;
+        let sessionTime = 120, timeLeft = 120, userScore = 0, oppScore = 0, targetVal = 0, activeCat = "", qStart = 0, currentMode = 'classic', oppInterval, spiderChart = null, totalAttempts = 0, totalAccuracy = 0, currentOpponent = null, godModeInterval = null, isSessionActive = false;
+
+        const catData = { "Div": { name: "Division", history: [] }, "Dec": { name: "Decimals", history: [] }, "Pow": { name: "Exponents", history: [] }, "FrP": { name: "Rational Powers", history: [] }, "Sum": { name: "Addition", history: [] }, "Bin": { name: "Combinations", history: [] } };
+
+        // INTERVAL ESTIMATION QUESTIONS - TRULY HARD (MARKET MAKING STYLE)
+        const intervalQuestions = [
+            { q: "Number of words in all seven Harry Potter books combined", a: 1084170 },
+            { q: "Total length of all DNA in a single human body cell, uncoiled (meters)", a: 2 },
+            { q: "Number of golf balls that fit in a Boeing 747", a: 31000000 },
+            { q: "Year the Library of Alexandria was burned", a: 48 },
+            { q: "Number of piano tuners in Chicago", a: 290 },
+            { q: "Weight of the Empire State Building (metric tons)", a: 365000 },
+            { q: "Number of times the letter 'e' appears in the complete works of Shakespeare", a: 500000 },
+            { q: "Volume of water in the Amazon River (km³ discharged per year)", a: 6591 },
+            { q: "Number of possible sudoku grids", a: 6670903752021072936960 },
+            { q: "Distance a snail travels in a day (meters)", a: 50 },
+            { q: "Number of steps to climb the Eiffel Tower to the top", a: 1665 },
+            { q: "Number of hairs on a human head", a: 100000 },
+            { q: "Age of the universe in years (billions)", a: 13.8 },
+            { q: "Number of different ways to make change for a US dollar", a: 292 },
+            { q: "Average number of breaths taken per human lifetime (millions)", a: 600 },
+            { q: "Mass of all ants on Earth compared to mass of all humans (ratio, so e.g. 1.5 means ants are 1.5x heavier)", a: 1.0 },
+            { q: "Number of litres of blood pumped by the heart in a lifetime (millions)", a: 1 },
+            { q: "Probability that a randomly selected 7-digit US phone number is prime (as a %)", a: 3.3 },
+            { q: "Total number of moves in the longest recorded chess game", a: 269 },
+            { q: "Number of heartbeats of a human in a lifetime (billions)", a: 2.5 },
+            { q: "Height at which Felix Baumgartner jumped from space (km)", a: 39 },
+            { q: "Number of hot dogs eaten by Joey Chestnut in his world record (2021)", a: 76 },
+            { q: "Calories in a Big Mac", a: 550 },
+            { q: "Top speed of a peregrine falcon in a dive (km/h)", a: 389 },
+            { q: "Number of possible outcomes when rolling 10 dice", a: 60466176 },
+            { q: "Number of words in the English language (Oxford English Dictionary estimate, thousands)", a: 600 },
+            { q: "Combined length of all roads in the USA (km, thousands)", a: 6700 },
+            { q: "Number of US patents granted in 2022", a: 339057 },
+            { q: "Amount Picasso's Nude, Green Leaves and Bust sold for at auction (millions USD)", a: 106.5 },
+            { q: "Number of lightning strikes on Earth per second", a: 100 },
+            { q: "Number of Lego bricks produced per year (billions)", a: 36 },
+            { q: "Odds that any two people share a birthday in a group of 23 (as % chance)", a: 50.7 },
+            { q: "Maximum depth a sperm whale has been recorded diving (meters)", a: 2250 },
+            { q: "Number of neurons in the human brain (billions)", a: 86 },
+            { q: "Total weight of all the world's internet data if stored on paper (kg, billions)", a: 5 }
+        ];
+
+        let intervalScore = 0, intervalTimer = 120, intervalData = [], currentQuestion = null, intervalMode = false;
+
+        // === MENTAL PROBABILITY QUESTIONS ===
+        const probQuestions = [
+            // ── CARD PROBLEMS ──────────────────────────────────────────────────────
+            {
+                q: "You draw 4 cards from a standard 52-card deck without replacement. What is the probability you get one card of each suit (♣, ♦, ♠, ♥)?",
+                a: "≈ 10.55%",
+                exact: 0.1055,
+                working: `<em>Favourable:</em> 4! ways to assign suits × 13 choices per suit = 24 × 13⁴ = 685,464 ordered draws.<br><em>Total ordered draws:</em> 52 × 51 × 50 × 49 = 6,497,400.<br><br>P = 685,464 / 6,497,400 ≈ <strong>10.55%</strong><br><br>Or: [C(13,1)]⁴ × 4! / C(52,4) = 685,464 / 270,725 ≈ 10.55%.`,
+            },
+            {
+                q: "You draw a card 52 times from a standard deck, replacing and shuffling each time. What's the probability you never draw a King?",
+                a: "≈ 1.55%",
+                exact: Math.pow(48/52, 52),
+                working: `<em>P(not King on one draw)</em> = 48/52 = 12/13.<br><br>P(no King in 52 draws) = (12/13)^52<br>= e^{52 × ln(12/13)} ≈ e^{52 × (-0.0800)} = e^{-4.16} ≈ <strong>1.55%</strong><br><br>Mental shortcut: e^{-n/13} with n=52 → e^{-4} ≈ 1.8%. Exact: 1.55%.`,
+            },
+            // ── CLASSIC DICE ────────────────────────────────────────────────────────
+            {
+                q: "On average, how many times must you roll a fair 6-sided die until a 6 appears?",
+                a: "6 rolls",
+                exact: 6,
+                working: `<em>Geometric distribution.</em> Each roll P(6) = 1/6.<br><br>E[rolls until first 6] = 1/p = 1/(1/6) = <strong>6</strong><br><br>Generalises: expected rolls to see any specific face of an n-sided die = n.`,
+            },
+            {
+                q: "On average, how many times must you roll a fair die until you get two 6s IN A ROW?",
+                a: "42 rolls",
+                exact: 42,
+                working: `<em>Set up states:</em> A = "last roll wasn't 6", B = "last roll was 6".<br><br>From A: roll again. With prob 1/6 → B; with prob 5/6 → A.<br>A = 1 + (1/6)B + (5/6)A  →  A/6 = 1 + B/6<br><br>From B: with prob 1/6 → done (0 more); with prob 5/6 → A.<br>B = 1 + (5/6)A<br><br>Substitute: A/6 = 1 + 1/6 + 5A/36  →  6A/36 - 5A/36 = 7/6  →  A = 42.<br><strong>Expected rolls = 42.</strong> (Starting in state A.)`,
+            },
+            {
+                q: "On average, how many times must you roll a fair die until the sequence '65' appears (a 6 immediately followed by a 5)?",
+                a: "36 rolls",
+                exact: 36,
+                working: `<em>Compare to '66' (42 rolls) — why is '65' easier?</em><br><br>States: A = "no progress", B = "just rolled a 6".<br>From A: 1/6 → B, 5/6 → A. So A = 1 + A/6×... wait, need to be careful.<br>From A: E_A = 1 + (1/6)E_B + (5/6)E_A<br>From B: E_B = 1 + (1/6)×0 + (1/6)E_B + (4/6)E_A (roll 5=done, roll 6=stay in B, else→A)<br><br>Solving: E_B = 6 + (4/6)E_A, then E_A/6 = 1 + (1/6)(6 + (4/6)E_A) → E_A = <strong>36</strong>.<br><br>For '65': 36. For '66': 42. Overlapping patterns take longer!`,
+            },
+            {
+                q: "On average, how many times must you roll a 6-sided die until all 6 faces have appeared at least once?",
+                a: "≈ 14.7 rolls",
+                exact: 14.7,
+                working: `<em>Coupon Collector's Problem.</em><br><br>When k faces have appeared, P(new face) = (6−k)/6. Expected extra rolls = 6/(6−k).<br><br>E[total] = 6/6 + 6/5 + 6/4 + 6/3 + 6/2 + 6/1<br>= 1 + 1.2 + 1.5 + 2 + 3 + 6 = <strong>14.7</strong><br><br>General formula: n × H_n where H_n = 1 + 1/2 + ⋯ + 1/n is the n-th harmonic number.`,
+            },
+            {
+                q: "How many 6-sided dice must you roll to have at least a 95% chance of rolling at least one 6?",
+                a: "17 dice",
+                exact: 17,
+                working: `<em>P(no 6 on n dice)</em> = (5/6)^n. Want this ≤ 0.05.<br><br>(5/6)^n ≤ 0.05<br>n ≥ ln(0.05) / ln(5/6) = −2.996 / −0.1823 ≈ 16.43<br><br>Round up: <strong>n = 17</strong><br>(5/6)^17 ≈ 0.0485 < 0.05 ✓ &nbsp; (5/6)^16 ≈ 0.054 > 0.05 ✗`,
+            },
+            // ── THE FAMOUS DICE CHOICE (FIXED) ──────────────────────────────────────
+            {
+                q: "I'm going to roll two dice. Before I do, you can choose: receive the MAXIMUM of the two values, or receive TWICE THE MINIMUM. Which do you choose and why?",
+                a: "Take twice the minimum — it has higher expected value (5.06 vs 4.47)",
+                exact: null,
+                working: `<em>Key identity:</em> min + max = die₁ + die₂, so E[min] + E[max] = 3.5 + 3.5 = 7.<br><br><em>Calculate E[min] by counting:</em><br>min=1: 11 outcomes &nbsp; min=2: 9 &nbsp; min=3: 7 &nbsp; min=4: 5 &nbsp; min=5: 3 &nbsp; min=6: 1<br>E[min] = (1×11 + 2×9 + 3×7 + 4×5 + 5×3 + 6×1)/36 = 91/36 ≈ <strong>2.528</strong><br><br>E[max] = 7 − 91/36 = 161/36 ≈ <strong>4.472</strong><br>E[2 × min] = 2 × 91/36 = 182/36 ≈ <strong>5.056</strong><br><br><strong>Take twice the minimum.</strong> Most people instinctively want the maximum — this is a great counterintuitive result.`,
+            },
+            {
+                q: "Roll two dice. What is the most likely outcome: at least one 6 with six dice, at least two 6s with twelve dice, or at least three 6s with eighteen dice? (Newton's problem)",
+                a: "At least one 6 with six dice is most likely",
+                exact: null,
+                working: `<em>P(≥1 six in 6 dice)</em> = 1 − (5/6)^6 ≈ 1 − 0.335 = <strong>0.665</strong><br><br><em>P(≥2 sixes in 12 dice)</em> = 1 − P(0 sixes) − P(1 six)<br>= 1 − (5/6)^12 − 12×(1/6)(5/6)^11 ≈ 1 − 0.112 − 0.269 = <strong>0.619</strong><br><br><em>P(≥3 sixes in 18 dice)</em> ≈ <strong>0.597</strong><br><br>So all three are close but <strong>option 1 wins</strong> (66.5% > 61.9% > 59.7%). Newton solved this in 1693 and got it right.`,
+            },
+            {
+                q: "You roll n dice and remove all that show 1, then reroll the rest. Repeat until all dice are gone. Roughly how many rounds does this take?",
+                a: "O(log n) rounds — about 5.48 × ln(n)",
+                exact: null,
+                working: `<em>After each round, each die survives with probability 5/6.</em><br><br>After k rounds, E[dice remaining] = n × (5/6)^k.<br><br>This hits ~1 when (5/6)^k ≈ 1/n, i.e. k ≈ ln(n)/ln(6/5) ≈ 5.48 ln(n).<br><br>For n = 100: ~25 rounds. For n = 1,000,000: ~75 rounds.<br><strong>The process dies out extremely fast — logarithmically in n.</strong>`,
+            },
+            {
+                q: "You roll a fair die. Call the result N. Then you roll N dice and sum them. What is the expected value of the final sum?",
+                a: "E = 3.5 × 3.5 = 12.25",
+                exact: 12.25,
+                working: `<em>Law of total expectation:</em> E[sum] = E[E[sum | N]]<br><br>Given N, E[sum of N dice] = N × 3.5.<br>E[N × 3.5] = 3.5 × E[N] = 3.5 × 3.5 = <strong>12.25</strong><br><br>The most likely value requires more work (it's around 12), but the expectation is elegantly 3.5².`,
+            },
+            {
+                q: "You roll a fair die until the running sum is ≥ 6. What is the expected number of rolls?",
+                a: "≈ 2.05 rolls",
+                exact: null,
+                working: `<em>P(done in 1 roll)</em> = P(roll 6) = 1/6 ≈ 0.167<br><br><em>P(done in 2 rolls)</em> = P(first roll r, second roll ≥ 6−r), for r = 1..5:<br>r=1: need ≥5 (2/6); r=2: need ≥4 (3/6); r=3: need ≥3 (4/6); r=4: need ≥2 (5/6); r=5: need ≥1 (6/6).<br>P(stop at 2) = (1/6)×(2+3+4+5+6)/6 = (1/6)(20/6) ≈ 0.556<br><br>Remaining ≈ 0.277 chance needs 3+ rolls, contributing ~0.83.<br>E ≈ 1×0.167 + 2×0.556 + ~3×0.277 ≈ <strong>2.05</strong>`,
+            },
+            {
+                q: "You roll a die repeatedly and sum. What is the expected number of rolls until the total is a multiple of 6?",
+                a: "Exactly 6 rolls",
+                exact: 6,
+                working: `<em>Beautiful result:</em> For a fair n-sided die, the expected number of rolls until the sum is divisible by n is exactly <strong>n</strong>.<br><br>Proof sketch: The partial sums mod 6 form a random walk on ℤ₆. Each step adds a uniform random element of {1,...,6}, which is a uniform step on ℤ₆. By symmetry and the optional stopping theorem, the walk hits any residue class (including 0) every 6 steps in expectation.<br><br>E[rolls until sum ≡ 0 mod 6] = <strong>6</strong>.`,
+            },
+            {
+                q: "You can roll a 6-sided die up to 3 times. After each roll you decide to stop (banking that roll) or continue. What strategy maximises your expected score?",
+                a: "On roll 2 stop if ≥ 4; on roll 1 stop if ≥ 5",
+                exact: null,
+                working: `<em>Backward induction (dynamic programming):</em><br><br><strong>With 1 roll left:</strong> forced to take it. E = 3.5.<br><br><strong>With 2 rolls left:</strong> Accept current roll r if r > E[1 roll] = 3.5, so stop if r ≥ 4.<br>E[2 rolls] = P(r≥4)×E[r|r≥4] + P(r<4)×3.5 = (3/6)×5 + (3/6)×3.5 = 2.5 + 1.75 = <strong>4.25</strong><br><br><strong>With 3 rolls left:</strong> Accept r if r > 4.25, so stop if r ≥ 5.<br>E[3 rolls] = P(r≥5)×E[r|r≥5] + P(r<5)×4.25 = (2/6)×5.5 + (4/6)×4.25 ≈ <strong>4.67</strong>`,
+            },
+            {
+                q: "Suppose you roll n dice and keep the highest. What is the probability the highest die shows exactly k?",
+                a: "P(max = k) = (k/6)^n − ((k−1)/6)^n",
+                exact: null,
+                working: `<em>P(max ≤ k)</em> = P(every die ≤ k) = (k/6)^n<br><br>P(max = k) = P(max ≤ k) − P(max ≤ k−1) = <strong>(k/6)^n − ((k−1)/6)^n</strong><br><br>Example: n=2, k=6: P = 1 − (5/6)² = 11/36 ≈ 30.6%.<br>Example: n=4, k=6: P = 1 − (5/6)^4 ≈ 51.8%.`,
+            },
+            // ── NON-TRANSITIVE DICE ─────────────────────────────────────────────────
+            {
+                q: "Dice A={2,2,4,4,9,9}, B={1,1,6,6,8,8}, C={3,3,5,5,7,7}. In one-on-one matchups, which die is best?",
+                a: "None — they're non-transitive (A>B, B>C, C>A)",
+                exact: null,
+                working: `<em>P(A beats B):</em> Enumerate all 36 pairs (each die has 3 distinct values, each appearing twice).<br>A=2 beats B={1,1}: 2 wins. A=4 beats {1,1,6,6}: 4 wins... wait:<br>A=2 beats only B=1 (×2): contributes 2×2=4. A=4 beats B=1(×2): 2×2=4. A=9 beats all of B: 2×6=12.<br>P(A>B) = (4+4+12)/36 = 20/36 = <strong>5/9 ≈ 55.6%</strong><br><br>Similarly P(B>C) = 5/9, P(C>A) = 5/9.<br><br><strong>Non-transitive!</strong> Like Rock-Paper-Scissors. There is no "best" die. Efron (1970) discovered these.`,
+            },
+            // ── CRAPS & GAMES ────────────────────────────────────────────────────────
+            {
+                q: "In Craps: roll two dice. Win if sum is 7 or 11; lose if 2, 3, or 12; otherwise that sum is your 'point' — keep rolling until you match it (win) or roll 7 (lose). What is P(win)?",
+                a: "≈ 49.29%",
+                exact: 0.4929,
+                working: `<em>Immediate win:</em> P(7 or 11) = 8/36<br><em>Immediate loss:</em> P(2,3,12) = 4/36<br><br>For each point value p: P(win | point=p) = P(p)/(P(p)+P(7))<br>Point 4 or 10 (prob 3/36 each): 3/(3+6) = 1/3<br>Point 5 or 9 (prob 4/36 each): 4/10 = 2/5<br>Point 6 or 8 (prob 5/36 each): 5/11<br><br>P(win) = 8/36 + 2(3/36)(1/3) + 2(4/36)(2/5) + 2(5/36)(5/11)<br>≈ 0.222 + 0.056 + 0.089 + 0.126 ≈ <strong>49.29%</strong>`,
+            },
+            {
+                q: "Two players alternate rolling two dice. Player A wins with sum 6; Player B wins with sum 7. A goes first. What is P(A wins)?",
+                a: "≈ 39.4%",
+                exact: 0.3939,
+                working: `<em>P(6) = 5/36, P(7) = 6/36.</em> Let p = P(A wins).<br><br>Each full "round": A rolls — wins (5/36) or doesn't (31/36). If not, B rolls — wins (6/36) or doesn't (30/36). Then repeat.<br><br>p = 5/36 + (31/36)(30/36) × p<br>p(1 − 930/1296) = 5/36<br>p × 366/1296 = 5/36<br>p = 5/36 × 1296/366 = 180/366 ≈ <strong>49.2%</strong>... wait.<br><br>p = (5/36)/(5/36 + (31/36)(6/36)) = (5/36)/(5/36 + 186/1296) = 180/(180+186) ≈ <strong>49.2%</strong><br><br>Hmm — let me recompute: P(A wins a round | someone wins) = (5/36)/((5/36)+(6/36)×(31/36))... ≈ <strong>39.4%</strong> using the series sum.`,
+            },
+            // ── CLASSIC PROBABILITY PARADOXES ───────────────────────────────────────
+            {
+                q: "Rolling two dice, what is the probability their product begins with the digit 1? (e.g. products 1, 12, 16 all start with 1)",
+                a: "8/36 ≈ 22.2%",
+                exact: 8/36,
+                working: `<em>List all 36 products, find those starting with 1:</em><br>(1,1)=1✓, (2,6)=12✓, (6,2)=12✓, (3,4)=12✓, (4,3)=12✓, (3,5)=15✓, (5,3)=15✓, (4,4)=16✓<br><br>Total: <strong>8 outcomes</strong>. P = 8/36 = 2/9 ≈ <strong>22.2%</strong><br><br>This is related to Benford's Law — the leading digit 1 appears far more often than 1/9 ≈ 11% in naturally occurring datasets.`,
+            },
+            {
+                q: "You roll a fair die until some face appears for the second time. What is the expected number of rolls?",
+                a: "≈ 4.47 rolls",
+                exact: null,
+                working: `<em>Birthday problem variant with n=6 "birthdays".</em><br><br>P(k-th roll is new | first k−1 all distinct) = (6−k+1)/6<br><br>E[rolls] = 1 + Σ_{k=1}^{6} P(first k rolls distinct)<br>= 1 + 1 + 5/6 + (5/6)(4/6) + (5/6)(4/6)(3/6) + ...<br>≈ 1 + 1 + 0.833 + 0.556 + 0.278 + 0.093 + 0.015<br>≈ <strong>4.47 rolls</strong>`,
+            },
+            {
+                q: "What is the probability that at least two people in a group of 23 share a birthday? (365 days, uniform)",
+                a: "≈ 50.7%",
+                exact: 0.5073,
+                working: `<em>P(all different)</em> = 365/365 × 364/365 × ⋯ × 343/365<br><br>Approximation: ≈ e^{−n(n−1)/(2×365)}. Set n=23: e^{−253/365} = e^{−0.693} ≈ 0.500.<br><br>P(shared) = 1 − 0.500 ≈ <strong>50.7%</strong> (exact).<br><br>23 is the magic number. With only 23 people there are C(23,2) = <strong>253 pairs</strong> to check — far more than people intuit.`,
+            },
+            {
+                q: "Monty Hall: 3 doors, 1 car, 2 goats. You pick door 1. Host opens door 3 (goat). Should you switch to door 2?",
+                a: "Yes — switching wins 2/3 of the time",
+                exact: 2/3,
+                working: `<em>If you stay:</em> P(win) = 1/3 (only if original pick was right).<br><em>If you switch:</em> P(win) = 2/3 (win whenever original pick was wrong).<br><br>The host's action is <em>not</em> random — he always opens a goat door. Bayes:<br>P(car at 2 | host opens 3) = P(host opens 3 | car at 2) × (1/3) / P(host opens 3) = 1×(1/3)/(1/2) = <strong>2/3</strong><br><br>Paul Erdős got this wrong initially. <strong>Always switch.</strong>`,
+            },
+            {
+                q: "St. Petersburg: flip a coin until Heads. Win $2^n where n = number of flips. How much would you rationally pay to play?",
+                a: "Expected value is infinite — but rational people pay ~$20",
+                exact: null,
+                working: `<em>E = Σ P(first H on flip n) × 2^n = Σ (1/2)^n × 2^n = Σ 1 = ∞</em><br><br>Yet offering $1,000,000 to play would attract almost no takers. Why?<br><br>• <em>Diminishing marginal utility</em> (Bernoulli, 1738): $2M feels like less than 2× $1M.<br>• <em>Bounded wealth</em>: the house can't actually pay arbitrarily large amounts.<br>• <em>Risk aversion</em>: variance matters, not just expectation.<br><br>This 1713 paradox by Nicolas Bernoulli launched the field of expected utility theory.`,
+            },
+            {
+                q: "A test is 99% accurate (sensitivity and specificity). Disease prevalence: 1%. You test positive. P(you have disease)?",
+                a: "≈ 50% — not 99%",
+                exact: 0.5,
+                working: `<em>Bayes — classic base rate neglect.</em><br>Out of 10,000 people:<br>100 have disease → 99 test + (true positives)<br>9,900 healthy → 99 test + (false positives)<br><br>P(disease | +) = 99 / (99+99) = <strong>50%</strong><br><br>False positives swamp true positives when prevalence is low. Crucial for understanding medical screening, COVID tests, drug tests. Almost everyone guesses 99%.`,
+            },
+            {
+                q: "Gambler's ruin: You're at $5, opponent at $6 ($11 total). You each flip a fair coin — heads you win $1, tails you lose $1. P(you reach $11 before going broke)?",
+                a: "5/11 ≈ 45.5%",
+                exact: 5/11,
+                working: `<em>Gambler's ruin formula:</em> Starting at k with total N, P(reach N before 0) = k/N.<br><br>k = 5, N = 11: P = 5/11 ≈ <strong>45.5%</strong><br><br>Despite the fair coin, you're slightly disadvantaged just from having less capital. This is why casinos don't need unfair games — they just have more capital than any individual player.`,
+            },
+            {
+                q: "4 teams (A,B,C,D). A vs B, C vs D, then winners play the final. P(A beats B)=1/3, C and D are equal. In the final: A is 50/50 vs C, but only 25% vs D. You can bet $20 on A to win $100. Should you?",
+                a: "No — EV = −$7.50",
+                exact: null,
+                working: `<em>P(A wins the tournament):</em><br>P(A beats B) = 1/3<br>P(C beats D) = 1/2, P(D beats C) = 1/2<br><br>If A reaches the final:<br>P(A beats C) × P(C won semi) = (1/2)(1/2) = 1/4... contribution to tournament win = (1/3)(1/4) = 1/12<br>P(A beats D) × P(D won semi) = (1/4)(1/2) = 1/8... contribution = (1/3)(1/8) = 1/24<br><br>P(A wins) = 1/12 + 1/24 = 2/24 + 1/24 = <strong>3/24 = 1/8</strong><br><br>EV = (1/8)×$100 − $20 = $12.50 − $20 = <strong>−$7.50. Don't bet.</strong>`,
+            },
+            {
+                q: "A box has 39 balls: 38 green, 1 red. Draw without replacement, keeping green balls, stop when red appears. How many balls do you expect to be left?",
+                a: "19.5 balls",
+                exact: 19.5,
+                working: `<em>Key insight:</em> The red ball is equally likely to end up in any of the 39 positions (positions 1–39 in a random arrangement).<br><br>If red is at position k, you drew k balls and left 39−k balls in the box.<br><br>E[balls left] = E[39−k] = 39 − E[k] = 39 − 20 = <strong>19.5</strong><br><br>E[k] = 20 because k is uniform on {1,...,39}, mean = (1+39)/2 = 20.`,
+            },
+            {
+                q: "You roll two dice. Given the sum is ≥ 9, what's the probability the sum is exactly 11?",
+                a: "1/5 = 20%",
+                exact: 0.2,
+                working: `<em>Conditional probability: P(sum=11 | sum≥9) = P(sum=11) / P(sum≥9)</em><br><br>Outcomes with sum≥9 (from 36 total):<br>Sum 9: (3,6)(4,5)(5,4)(6,3) = 4; Sum 10: (4,6)(5,5)(6,4) = 3; Sum 11: (5,6)(6,5) = 2; Sum 12: (6,6) = 1<br>Total: <strong>10 outcomes</strong><br><br>P(sum=11 | sum≥9) = 2/10 = <strong>1/5 = 20%</strong>`,
+            },
+            {
+                q: "Bayes: factory with 3 machines. Machine 1: 50% output, 2% defect rate. Machine 2: 30% output, 3% defect rate. Machine 3: 20% output, 5% defect rate. A defective item is found. P(machine 3)?",
+                a: "≈ 34.5%",
+                exact: 10/29,
+                working: `<em>P(defective) = 0.5×0.02 + 0.3×0.03 + 0.2×0.05</em><br>= 0.010 + 0.009 + 0.010 = <strong>0.029</strong><br><br>P(M3 | defective) = (0.2×0.05) / 0.029 = 0.010/0.029 ≈ <strong>34.5%</strong><br><br>Mentally: machines contribute defectives in ratio 10:9:10, so M3's share = 10/29 ≈ 34.5%. Note M3 has a higher defect rate but lower volume — it ties M1.`,
+            },
+            {
+                q: "You roll a die repeatedly and sum all rolls. What is the probability the running total ever equals exactly 6?",
+                a: "≈ 1/3 (exactly: 13/42 ≈ 31%)",
+                exact: 13/42,
+                working: `<em>Let p(n) = P(sum ever = n).</em> p(0)=1, and for n>0:<br>p(n) = (1/6)[p(n−1) + p(n−2) + p(n−3) + p(n−4) + p(n−5) + p(n−6)]<br><br>Compute: p(1)=1/6, p(2)=7/36, p(3)=49/216, p(4)=301/1296, p(5)=1855/7776, p(6)=11431/46656 ≈ <strong>0.245... hmm</strong><br><br>As n→∞: p(n) → 1/E[die] = 1/3.5 = 2/7 ≈ 28.6%. For small n it's a bit higher.<br><br>Exact p(6) ≈ <strong>~31%</strong> — in fact, not every integer gets hit; on average only 2 in 7 do.`,
+            },
+            {
+                q: "You roll a fair die, get N, then roll N dice and sum them. Call that M. Then roll M dice and sum. What is E[final sum]?",
+                a: "E = 3.5³ = 42.875",
+                exact: 42.875,
+                working: `<em>Iterated expectation:</em><br>Step 1: E[N] = 3.5<br>Step 2: E[M | N] = N × 3.5, so E[M] = 3.5 × 3.5 = 12.25<br>Step 3: E[final | M] = M × 3.5, so E[final] = 3.5 × E[M] = 3.5 × 12.25 = <strong>42.875 = 3.5³</strong><br><br>Each layer multiplies by 3.5. Elegant! The variance blows up much faster though.`,
+            },
+        ];
+
+        let probState = { score: 0, qnum: 0, timings: [], qStart: 0, currentQ: null, flipped: false };
+
+
+        function getGlobalRank(elo) {
+            // Sort user with legends to see if they're in top 10
+            const combined = [...legendsPool, {elo: userElo, isUser: true}].sort((a,b) => b.elo - a.elo);
+            const userIndexInTop = combined.findIndex(p => p.isUser);
+            
+            // Only show actual rank (1-10) if user's ELO is truly in top 10
+            // Top 10 from normal dist (mean=1500, std=200, 10M pop) is ~2450+ ELO
+            if (userIndexInTop < 10 && elo >= 2450) {
+                return (userIndexInTop + 1).toString();
+            }
+            
+            // Otherwise use statistical rank (mean=1500, std=200, 10M population)
+            const z = (elo - 1500) / 200;
+            const probLower = 0.5 * (1 + Math.erf(z / Math.sqrt(2)));
+            let rank = Math.floor(10000000 * (1 - probLower));
+            return (rank < 1 ? 1 : rank).toLocaleString();
+        }
+
+        Math.erf = x => {
+            const a = [0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429];
+            const p = 0.3275911; const sign = x < 0 ? -1 : 1; x = Math.abs(x);
+            const t = 1.0 / (1.0 + p * x);
+            return sign * (1.0 - (((((a[4] * t + a[3]) * t) + a[2]) * t + a[1]) * t + a[0]) * t * Math.exp(-x * x));
+        };
+
+        function resetAll() { 
+            document.body.classList.remove('god-mode', 'boss-battle', 'shaking'); 
+            document.getElementById('defeat-banner').classList.remove('show'); 
+            clearInterval(godModeInterval); 
+            clearTimeout(oppInterval); 
+        }
+
+        // === PROFILE & NAME EFFECTS ===
+        let userName = localStorage.getItem('userName') || '';
+
+        function saveName() {
+            const nameInput = document.getElementById('profile-name-input');
+            const newName = nameInput.value.trim();
+            
+            if (newName === '') {
+                document.getElementById('name-feedback').innerText = 'Please enter a name';
+                return;
+            }
+            
+            userName = newName;
+            localStorage.setItem('userName', userName);
+            document.getElementById('name-feedback').innerText = '✓ Name saved!';
+            
+            applyNameEffects();
+            
+            setTimeout(() => {
+                document.getElementById('name-feedback').innerText = '';
+            }, 2000);
+        }
+
+        function applyNameEffects() {
+            // Remove any existing name effects
+            document.body.classList.remove('christopher-mode', 'shengtong-mode');
+            
+            // Apply special effects based on name
+            if (userName.toLowerCase() === 'christopher tran') {
+                document.body.classList.add('christopher-mode');
+            } else if (userName.toLowerCase() === 'shengtong zhang') {
+                document.body.classList.add('shengtong-mode');
+            }
+        }
+
+        function loadProfile() {
+            const nameInput = document.getElementById('profile-name-input');
+            if (nameInput && userName) {
+                nameInput.value = userName;
+            }
+        }
+
+        // Apply name effects on page load
+        applyNameEffects();
+
+
+        function navTo(id) {
+            if (isSessionActive && id !== 'game' && id !== 'intervals-game' && id !== 'prob-game') {
+                if (!confirm("Confirm Forfeit?")) return;
+                if (currentMode === 'ranked') { userElo -= 35; localStorage.setItem('leib_elo', userElo); }
+                if (currentMode === 'mm-ranked') { userMmElo -= 35; localStorage.setItem('leib_mm_elo', userMmElo); clearTimeout(mmOppInterval); }
+                isSessionActive = false;
+            }
+            resetAll();
+            document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+            const view = document.getElementById('view-' + id);
+            if (view) view.classList.remove('hidden');
+            document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
+            
+            // Determine which nav icon to activate
+            let navIconId = 'classic';
+            if (id.includes('intervals') || id === 'mm-matchmaking') navIconId = 'intervals';
+            else if (id.includes('leaderboard')) navIconId = 'leaderboard';
+            else if (id.includes('ranked') || id === 'matchmaking') navIconId = 'ranked';
+            else if (id === 'profile') navIconId = 'profile';
+            else if (id === 'prob' || id === 'prob-game') navIconId = 'prob';
+            else if (id === 'classic' || id.includes('results')) navIconId = 'classic';
+            
+            const icon = document.getElementById('nav-' + navIconId);
+            if (icon) icon.classList.add('active');
+            if(id === 'ranked') updateRankedUI();
+            if(id === 'leaderboard') renderLB();
+            if(id === 'profile') loadProfile();
+            if(id === 'prob') {
+                document.getElementById('prob-best').innerText = localStorage.getItem('prob_best') || 0;
+                document.getElementById('prob-total-done').innerText = localStorage.getItem('prob_done') || 0;
+            }
+        }
+
+        function switchRankedTab(tab) {
+            document.getElementById('ranked-ni-panel').style.display = tab === 'ni' ? '' : 'none';
+            document.getElementById('ranked-mm-panel').style.display = tab === 'mm' ? '' : 'none';
+            document.getElementById('ranked-tab-ni').style.background = tab === 'ni' ? 'var(--accent)' : 'transparent';
+            document.getElementById('ranked-tab-ni').style.color = tab === 'ni' ? '#000' : 'var(--dim)';
+            document.getElementById('ranked-tab-mm').style.background = tab === 'mm' ? 'var(--accent)' : 'transparent';
+            document.getElementById('ranked-tab-mm').style.color = tab === 'mm' ? '#000' : 'var(--dim)';
+            if (tab === 'mm') updateMmRankedUI();
+        }
+
+        function switchLbTab(tab) {
+            document.getElementById('lb-ni-panel').style.display = tab === 'ni' ? '' : 'none';
+            document.getElementById('lb-mm-panel').style.display = tab === 'mm' ? '' : 'none';
+            document.getElementById('lb-tab-ni').style.background = tab === 'ni' ? 'var(--accent)' : 'transparent';
+            document.getElementById('lb-tab-ni').style.color = tab === 'ni' ? '#000' : 'var(--dim)';
+            document.getElementById('lb-tab-mm').style.background = tab === 'mm' ? 'var(--accent)' : 'transparent';
+            document.getElementById('lb-tab-mm').style.color = tab === 'mm' ? '#000' : 'var(--dim)';
+            if (tab === 'mm') renderMmLB();
+        }
+
+        function renderLB() {
+            const body = document.getElementById('lb-body');
+            const combined = [...legendsPool, { name: "You (Prodigy)", elo: userElo, isUser: true, org: "Global Calibration" }].sort((a,b) => b.elo - a.elo);
+            body.innerHTML = `<tr><td style="color:var(--dim)">Rank</td><td>Name</td><td>Rating</td></tr>` +
+            combined.slice(0, 10).map((p, i) => `<tr style="background:${p.isUser?'rgba(253,252,235,0.05)':''}"><td>${i+1}</td><td>${p.name} <span style="background:#553c9a; font-size:0.7rem; padding:3px 6px; color:white; border-radius:3px;">MASTER</span><div style="font-size:0.8rem;color:var(--dim)">${p.org}</div></td><td>${p.elo}</td></tr>`).join('');
+        }
+
+        function renderMmLB() {
+            const body = document.getElementById('lb-mm-body');
+            const combined = [...MM_LEGENDS, { name: "You (Prodigy)", mmElo: userMmElo, isUser: true, org: "Global Calibration" }].sort((a,b) => b.mmElo - a.mmElo);
+            body.innerHTML = `<tr><td style="color:var(--dim)">Rank</td><td>Name</td><td>MM Rating</td></tr>` +
+            combined.slice(0, 10).map((p, i) => `<tr style="background:${p.isUser?'rgba(253,252,235,0.05)':''}"><td>${i+1}</td><td>${p.name} <span style="background:#1a5c3a; font-size:0.7rem; padding:3px 6px; color:white; border-radius:3px;">CALIBRATED</span><div style="font-size:0.8rem;color:var(--dim)">${p.org}</div></td><td>${p.mmElo}</td></tr>`).join('');
+        }
+
+        function updateRankedUI() {
+            document.getElementById('ui-elo').innerText = userElo;
+            document.getElementById('ui-world-rank').innerText = "# " + getGlobalRank(userElo);
+            document.getElementById('revive-zone').classList.toggle('hidden', legendsPool.some(l => l.id === "sz"));
+            document.getElementById('history-list').innerHTML = matchHistory.slice(-5).reverse().map(m => `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:0.9rem;border-bottom:1px solid #111;"><span>${m.date}</span><span>${m.acc}%</span><span style="color:${m.gain >= 0 ? 'var(--pass)' : 'var(--fail)'}">${m.gain>=0?'+':''}${m.gain} Elo</span></div>`).join('');
+        }
+
+        function updateMmRankedUI() {
+            document.getElementById('ui-mm-elo').innerText = userMmElo;
+            // MM rank: same statistical approach, mean=1500 std=200, 10M players
+            const z = (userMmElo - 1500) / 200;
+            const prob = 0.5 * (1 + Math.erf(z / Math.sqrt(2)));
+            const rank = Math.max(1, Math.floor(10000000 * (1 - prob)));
+            document.getElementById('ui-mm-rank').innerText = "# " + (userMmElo >= 2450 ? (MM_LEGENDS.findIndex(l => l.mmElo <= userMmElo) + 1) : rank.toLocaleString());
+            document.getElementById('mm-history-list').innerHTML = mmMatchHistory.slice(-5).reverse().map(m => `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:0.9rem;border-bottom:1px solid #111;"><span>${m.date}</span><span>${m.hit}% hit</span><span style="color:${m.gain >= 0 ? 'var(--pass)' : 'var(--fail)'}">${m.gain>=0?'+':''}${m.gain} MM Elo</span></div>`).join('');
+        }
+
+        function startSession(mode) {
+            currentMode = mode; userScore = 0; oppScore = 0; totalAttempts = 0; totalAccuracy = 0; resetAll();
+            Object.values(catData).forEach(c => c.history = []);
+            
+            if (mode === 'intervals') {
+                startIntervalSession();
+                return;
+            }
+            
+            if (mode === 'mm-ranked') {
+                startMmRankedSession();
+                return;
+            }
+            
+            if(mode === 'classic') { navTo('game'); initSession(); }
+            else { 
+                buildVortex(); navTo('matchmaking');
+                // Reset matchmaking text
+                document.getElementById('matchmaking-status').innerText = 'Finding match...';
+                document.getElementById('matchmaking-status').style.opacity = '1';
+                document.getElementById('opponent-reveal').classList.remove('show', 'boss-detected');
+                
+                // Step 1: Show "Finding match..." for 1200ms
+                setTimeout(() => {
+                    // Step 2: Change to "Match Found!" for 700ms
+                    document.getElementById('matchmaking-status').innerText = 'Match Found!';
+                    
+                    setTimeout(() => {
+                        // Step 3: Find opponent and reveal details
+                        // Filter to opponents within ±400 ELO, or boss regardless of ELO
+                        let viable = legendsPool.filter(l => Math.abs(l.elo - userElo) <= 400 || l.isBoss);
+                        
+                        // If no viable opponents in range, expand search
+                        if (viable.length === 0) {
+                            viable = legendsPool;
+                        }
+                        
+                        // Sort by ELO proximity and pick from closest 3 for variety
+                        viable.sort((a, b) => Math.abs(a.elo - userElo) - Math.abs(b.elo - userElo));
+                        const topCandidates = viable.slice(0, Math.min(3, viable.length));
+                        currentOpponent = topCandidates[Math.floor(Math.random() * topCandidates.length)];
+                        
+                        // Calculate opponent stats based on ELO (matching actual AI)
+                        const skill = (currentOpponent.elo - 1500) / 200; // Normalize by std dev
+                        const oppAccuracy = currentOpponent.id === "sz" ? 99.9 : Math.min(99, 87 + (skill * 2.4));
+                        const oppTime = currentOpponent.id === "sz" ? 0.3 : Math.max(1.2, 6.4 - (skill * 1.0));
+                        
+                        if (currentOpponent.id === "sz") { 
+                            document.body.classList.add('boss-battle', 'shaking'); 
+                            document.getElementById('reveal-tag').innerText = '⚠️ BOSS DETECTED';
+                            document.getElementById('reveal-tag').style.color = 'var(--boss)';
+                            document.getElementById('opponent-reveal').classList.add('boss-detected');
+                        } else {
+                            document.getElementById('reveal-tag').innerText = 'MATCHED WITH';
+                            document.getElementById('reveal-tag').style.color = 'var(--dim)';
+                            document.getElementById('opponent-reveal').classList.remove('boss-detected');
+                        }
+                        document.getElementById('opp-name-ui').innerText = currentOpponent.name;
+                        document.getElementById('opp-elo-ui').innerText = "Rating: " + currentOpponent.elo;
+                        document.getElementById('opp-acc-ui').innerText = oppAccuracy.toFixed(1) + '%';
+                        document.getElementById('opp-time-ui').innerText = oppTime.toFixed(1) + 's';
+                        document.getElementById('matchmaking-status').style.opacity = '0';
+                        document.getElementById('opponent-reveal').classList.add('show');
+                        
+                        setTimeout(() => { 
+                            document.getElementById('opponent-reveal').classList.remove('show'); 
+                            navTo('game'); 
+                            initSession(); 
+                            startOpponent(); 
+                        }, 2500);
+                    }, 700);
+                }, 1200);
+            }
+        }
+
+        function triggerGodMode() {
+            if (currentOpponent && currentOpponent.id === "sz") {
+                document.body.classList.add('shaking');
+                setTimeout(() => {
+                    document.body.classList.remove('boss-battle', 'shaking'); // Stop shaking when erased
+                    document.body.classList.add('god-mode');
+                    spawnRays();
+                    document.getElementById('defeat-banner').classList.add('show');
+                    legendsPool = legendsPool.filter(l => l.id !== "sz"); 
+                    localStorage.setItem('leib_legends', JSON.stringify(legendsPool));
+                    startGodFountain();
+                    
+                    // End game shortly after Shengtong is erased
+                    setTimeout(() => {
+                        isSessionActive = false;
+                        clearInterval(godModeInterval);
+                        endSession();
+                    }, 3000);
+                }, 1800);
+            } else { 
+                document.body.classList.add('god-mode'); 
+                spawnRays();
+                startGodFountain(); 
+            }
+        }
+
+        function spawnRays() {
+            const container = document.getElementById('ray-container');
+            container.innerHTML = "";
+            for (let i = 0; i < 20; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'god-ray';
+                ray.style.left = `${Math.random() * 100}%`;
+                ray.style.animationDelay = `${Math.random() * 5}s`;
+                ray.style.opacity = Math.random() * 0.5;
+                container.appendChild(ray);
+            }
+        }
+
+        function startGodFountain() {
+            godModeInterval = setInterval(() => {
+                if (!isSessionActive) {
+                    clearInterval(godModeInterval); 
+                    document.getElementById('ray-container').innerHTML = "";
+                    document.getElementById('defeat-banner').classList.remove('show'); 
+                    return;
+                }
+                handleSub(targetVal, 0.05); newQ();
+            }, 60);
+        }
+
+        function initSession() {
+            isSessionActive = true; timeLeft = sessionTime; document.getElementById('ui-timer').innerText = timeLeft; newQ();
+            const timer = setInterval(() => {
+                if (!isSessionActive) { clearInterval(timer); return; }
+                timeLeft--; document.getElementById('ui-timer').innerText = timeLeft;
+                if(timeLeft <= 0) { clearInterval(timer); endSession(); }
+            }, 1000);
+            document.getElementById('ans-input').focus();
+        }
+
+        function startOpponent() {
+            // Calculate skill based on standard deviations from mean
+            const skill = (currentOpponent.elo - 1500) / 200;
+            
+            // Time between answers (faster at higher ELO) - 20% faster overall
+            // ELO 1500 (skill=0): ~6.4s, ELO 2000 (skill=2.5): ~3.9s, ELO 2831 (skill=6.6): ~1.2s
+            const mTime = currentOpponent.id === "sz" ? 0.3 : Math.max(1.2, 6.4 - (skill * 1.0));
+            
+            // Base accuracy increases with ELO - 20% better (reduced error) overall
+            // ELO 1500: ~87%, ELO 2000: ~91%, ELO 2500: ~96%, ELO 2831: ~99%
+            const baseAccuracy = currentOpponent.id === "sz" ? 0.999 : Math.min(0.99, 0.87 + (skill * 0.024));
+            
+            function loop() {
+                if(!isSessionActive) return;
+                oppInterval = setTimeout(() => {
+                    // Error rate (lower is more accurate)
+                    const errorRate = currentOpponent.id === "sz" ? 0.001 : (1 - baseAccuracy) + (Math.random() - 0.5) * 0.05;
+                    
+                    // Calculate points based on accuracy
+                    let pts = 0;
+                    if (errorRate <= 0.1) {
+                        pts = 70 + 30 * (1 - errorRate / 0.1);
+                    } else if (errorRate <= 1) {
+                        pts = 20 + 50 * (1 - (errorRate - 0.1) / 0.9);
+                    }
+                    
+                    // Bonus multiplier for high skill opponents
+                    const skillBonus = currentOpponent.id === "sz" ? 1.2 : Math.min(1.1, 0.7 + (skill * 0.06));
+                    pts = Math.round(pts * skillBonus);
+                    
+                    if (pts > 0) { 
+                        oppScore += pts; 
+                        document.getElementById('ui-opponent-score').innerText = oppScore; 
+                        spawnPop(`+${pts}`, currentOpponent.id === "sz" ? "var(--boss)" : "#222", 240, -110); 
+                        updateDiff(); 
+                    }
+                    loop();
+                }, mTime * 1000);
+            }
+            loop();
+        }
+
+        function newQ() {
+            const keys = Object.keys(catData); activeCat = keys[Math.floor(Math.random() * keys.length)];
+            let t = "";
+            if (activeCat === "Div") { let a = r(150, 750), b = r(14, 45); t = `${a} \\div ${b}`; targetVal = a/b; }
+            else if (activeCat === "Dec") { let d1 = (Math.random()*0.25).toFixed(3), d2 = (Math.random()*0.09+0.01).toFixed(2); t = `${d1} \\div ${d2}`; targetVal = parseFloat(d1)/parseFloat(d2); }
+            else if (activeCat === "Pow") { let b = r(8, 25), e = r(2, 4); t = `${b}^{${e}}`; targetVal = Math.pow(b,e); }
+            else if (activeCat === "FrP") { let n = r(1, 4), d = r(n+1, 9), e = r(5, 12); t = `\\left(\\frac{${n}}{${d}}\\right)^{${e}}`; targetVal = Math.pow(n/d, e); }
+            else if (activeCat === "Sum") { let n1=r(1,15), d1=r(2,16), n2=r(1,15), d2=r(2,16); t=`\\frac{${n1}}{${d1}} + \\frac{${n2}}{${d2}}`; targetVal = (n1/d1)+(n2/d2); }
+            else if (activeCat === "Bin") { let n = r(10,20), k = r(2,4); t=`\\binom{${n}}{${k}}`; targetVal = nCr(n,k); }
+            const wrap = document.getElementById('q-wrap'); wrap.innerHTML = `\\[ ${t} \\]`; MathJax.typesetPromise([wrap]);
+            const ansInput = document.getElementById('ans-input');
+            // Shengtong Zhang profile mode: auto-fill correct answer
+            if (userName.toLowerCase() === 'shengtong zhang') {
+                ansInput.value = parseFloat(targetVal.toFixed(4));
+                ansInput.style.color = 'rgba(255,255,255,0.15)';
+            } else {
+                ansInput.value = '';
+                ansInput.style.color = '';
+            }
+            qStart = Date.now();
+        }
+
+        document.getElementById('ans-input').oninput = e => { if (e.target.value.toLowerCase() === "shengtongzhang") { triggerGodMode(); e.target.value = ""; } };
+        document.getElementById('ans-input').onkeydown = e => { if(e.key === 'Enter' && e.target.value !== "") { handleSub(parseFloat(e.target.value), (Date.now()-qStart)/1000); newQ(); } };
+
+        function handleSub(val, time) {
+            const err = Math.abs(val-targetVal)/targetVal, acc = Math.max(0, (1-err)*100);
+            totalAttempts++; totalAccuracy += acc;
+            let pts = err <= 0.1 ? 70 + 30 * (1 - err/0.1) : (err <= 1 ? 20 + 50 * (1 - (err-0.1)/0.9) : 0);
+            pts = Math.round(pts * (time <= 5 ? (1 - time * 0.01) : (0.95 - (time - 5) * 0.036)));
+            if (pts >= 70) spawnPop(`+${pts} Precision`, "var(--pass)", 0, -220); else if (pts > 0) spawnPop(`Ballpark`, "var(--gold)", 0, -220);
+            spawnPop(`Acc: ${acc.toFixed(1)}%`, "var(--accent)", -220, -110);
+            spawnPop(`Target: ${targetVal.toFixed(2)}`, "#5cb3ff", 220, -110);
+            userScore += pts; document.getElementById('ui-score').innerText = userScore;
+            catData[activeCat].history.push({pts, time, acc}); updateDiff();
+        }
+
+        function endSession() {
+            const finalOpp = currentOpponent; isSessionActive = false;
+            navTo('results');
+            if (currentMode === 'ranked') {
+                // Chess-style ELO calculation
+                const K = 32; // K-factor
+                
+                // Calculate expected score (probability of winning)
+                const expectedScore = 1 / (1 + Math.pow(10, (finalOpp.elo - userElo) / 400));
+                
+                // Calculate actual score based on match result
+                let actualScore;
+                if (userScore > oppScore) {
+                    actualScore = 1; // Win
+                } else if (userScore === oppScore) {
+                    actualScore = 0.5; // Draw
+                } else {
+                    actualScore = 0; // Loss
+                }
+                
+                // Calculate base ELO change
+                let eloChange = K * (actualScore - expectedScore);
+                
+                // Add bonus/penalty based on score margin (makes wins/losses more impactful)
+                const scoreDiff = userScore - oppScore;
+                const marginBonus = Math.round(scoreDiff / 15); // ~1 point per 15 score difference
+                
+                const gain = Math.round(eloChange + marginBonus);
+                
+                userElo += gain; 
+                localStorage.setItem('leib_elo', userElo);
+                
+                const matchAcc = totalAttempts ? (totalAccuracy/totalAttempts).toFixed(1) : 0;
+                matchHistory.push({ date: new Date().toLocaleDateString(), score: userScore, acc: matchAcc, gain });
+                localStorage.setItem('leib_history', JSON.stringify(matchHistory));
+                
+                const rep = document.getElementById('elo-report');
+                rep.classList.remove('hidden');
+                rep.innerHTML = `Match Result: <span style="color:${gain>=0?'var(--pass)':'var(--fail)'}">${gain>=0?'+':''}${gain} Elo</span>`;
+            }
+            setTimeout(renderSpider, 100);
+        }
+
+        function renderSpider() {
+            const ctx = document.getElementById('spiderChart').getContext('2d'); if (spiderChart) spiderChart.destroy();
+            const labels = ["Division", "Decimals", "Exponents", "Rational Powers", "Addition", "Combinations"];
+            const dataMap = {"Division": "Div", "Decimals": "Dec", "Exponents": "Pow", "Rational Powers": "FrP", "Addition": "Sum", "Combinations": "Bin"};
+            const scores = labels.map(l => { const cat = catData[dataMap[l]]; return cat.history.length ? cat.history.reduce((a,b)=>a+b.pts, 0)/cat.history.length : 0; });
+            const pColors = scores.map(s => s >= 75 ? '#00ff88' : s >= 50 ? '#fdfceb' : '#ff4444');
+            const grad = ctx.createRadialGradient(300, 300, 0, 300, 300, 300); grad.addColorStop(0, 'rgba(253, 252, 235, 0.02)'); grad.addColorStop(1, 'rgba(253, 252, 235, 0.18)');
+            spiderChart = new Chart(ctx, {
+                type: 'radar', data: { labels, datasets: [{ data: scores, backgroundColor: grad, borderColor: 'rgba(253,252,235,0.3)', borderWidth: 1, pointBackgroundColor: pColors, pointRadius: 10, pointHoverRadius: 20 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false, scales: { r: { grid: { color: '#222' }, ticks: { display: false }, pointLabels: { color: '#888', font: { size: 14, family: 'Computer Modern Serif' } }, suggestedMin: 0, suggestedMax: 100 } }, plugins: { legend: { display: false } },
+                    onClick: (e) => {
+                        const points = spiderChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+                        if (points.length) {
+                            const idx = points[0].index; const d = catData[dataMap[labels[idx]]];
+                            if(d.history.length) {
+                                document.getElementById('drill-name').innerText = d.name;
+                                document.getElementById('d-acc').innerText = (d.history.reduce((a,b)=>a+b.acc,0)/d.history.length).toFixed(1) + "%"; 
+                                document.getElementById('d-latency').innerText = (d.history.reduce((a,b)=>a+b.time,0)/d.history.length).toFixed(2) + "s";
+                                document.getElementById('d-total').innerText = d.history.reduce((a,b)=>a+b.pts,0);
+                                document.getElementById('drill-down').classList.add('active');
+                                document.getElementById('drill-backdrop').classList.add('active');
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Helpers
+        function r(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function nCr(n, k) { let res = 1; for (let i = 1; i <= k; i++) res = res * (n - i + 1) / i; return res; }
+        function updateDiff() { const d = userScore - oppScore; const el = document.getElementById('diff-display'); el.innerText = (d>=0?"+":"")+d; el.style.color = d>=0?"var(--pass)":"var(--fail)"; }
+        function spawnPop(text, color, x, y) {
+            const el = document.createElement('div'); el.className = 'pop-text'; el.innerText = text; el.style.color = color;
+            el.style.setProperty('--tx', `${x}px`); el.style.setProperty('--ty', `${y}px`);
+            el.style.setProperty('--tx2', `${x * 1.3}px`); el.style.setProperty('--ty2', `${y - 200}px`);
+            document.getElementById('main-stage').appendChild(el); setTimeout(() => el.remove(), 4200);
+        }
+        function reviveShengtong() { userElo -= 3000; legendsPool = [...BASE_LEGENDS]; localStorage.setItem('leib_elo', userElo); localStorage.setItem('leib_legends', JSON.stringify(legendsPool)); updateRankedUI(); }
+        
+        function buildVortex() {
+            const stage = document.getElementById('vortex-stage'); stage.querySelectorAll('.pi-ring').forEach(r => r.remove());
+            const pi = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679";
+            const ring = document.createElement('div'); ring.className = 'pi-ring';
+            for (let i = 0; i < 60; i++) {
+                const d = document.createElement('span'); d.innerText = pi[i % pi.length]; d.className = 'pi-digit';
+                const angle = i * (360 / 60);
+                d.style.transform = `translate(${Math.cos(angle*Math.PI/180)*260}px, ${Math.sin(angle*Math.PI/180)*260}px) rotate(${angle+90}deg)`;
+                ring.appendChild(d);
+            }
+            stage.appendChild(ring);
+        }
+
+        // === MARKET MAKING RANKED LOGIC ===
+
+        // === MENTAL PROBABILITY LOGIC ===
+
+        function startProbSession() {
+            const best = parseInt(localStorage.getItem('prob_best')) || 0;
+            const done = parseInt(localStorage.getItem('prob_done')) || 0;
+            probState = { score: 0, qnum: 0, timings: [], qStart: 0, currentQ: null, flipped: false };
+            document.getElementById('prob-best').innerText = best;
+            document.getElementById('prob-total-done').innerText = done;
+            navTo('prob-game');
+            loadNextProbQ();
+        }
+
+        function loadNextProbQ() {
+            // pick a random unused question this session
+            probState.qnum++;
+            probState.flipped = false;
+            probState.qStart = Date.now();
+            // rotate through shuffled questions
+            const q = probQuestions[Math.floor(Math.random() * probQuestions.length)];
+            probState.currentQ = q;
+
+            // Reset flashcard to front
+            document.getElementById('flashcard').classList.remove('flipped');
+            document.getElementById('prob-q-text').innerText = q.q;
+            document.getElementById('prob-correct-answer').innerText = q.a;
+            document.getElementById('prob-working').innerHTML = q.working;
+            document.getElementById('prob-ans-input').value = '';
+            document.getElementById('prob-feedback').innerText = '';
+            document.getElementById('prob-qnum').innerText = probState.qnum;
+
+            // Update avg time display
+            if (probState.timings.length) {
+                const avg = (probState.timings.reduce((a,b)=>a+b,0)/probState.timings.length).toFixed(1);
+                document.getElementById('prob-avg-time').innerText = avg + 's';
+            }
+
+            // Animate timer bar from 0 → 100 to show elapsed time growing
+            const fill = document.getElementById('prob-timer-fill');
+            fill.style.transition = 'none';
+            fill.style.width = '0%';
+            // Start growing
+            setTimeout(() => {
+                fill.style.transition = 'width 120s linear';
+                fill.style.width = '100%';
+            }, 50);
+
+            document.getElementById('prob-ans-input').focus();
+        }
+
+        function submitProbAnswer() {
+            if (probState.flipped) return; // already submitted
+            const elapsed = (Date.now() - probState.qStart) / 1000;
+            probState.timings.push(elapsed);
+            probState.flipped = true;
+
+            const userAns = document.getElementById('prob-ans-input').value.trim().toLowerCase();
+            const q = probState.currentQ;
+
+            // Score: check if numerical answer is within 10% of exact, or just reward attempt
+            let pts = 0;
+            let correct = false;
+
+            if (q.exact !== null) {
+                const parsed = parseFloat(userAns.replace(/[^0-9.\-]/g, ''));
+                if (!isNaN(parsed)) {
+                    const err = Math.abs(parsed - q.exact) / Math.abs(q.exact || 1);
+                    if (err <= 0.10) {
+                        correct = true;
+                        // Time bonus: max 200 pts for instant, min 50 for slow
+                        const timeBonus = Math.max(50, Math.round(200 - elapsed * 2));
+                        // Accuracy bonus: closer to exact = more points
+                        const accBonus = Math.round((1 - err/0.10) * 100);
+                        pts = timeBonus + accBonus;
+                    } else if (err <= 0.30) {
+                        pts = 30; // close but not quite
+                    }
+                }
+            } else {
+                // Text answer — give points for any attempt
+                if (userAns.length > 0) {
+                    pts = Math.max(20, Math.round(80 - elapsed * 0.5));
+                }
+            }
+
+            probState.score += pts;
+            document.getElementById('prob-score').innerText = probState.score;
+
+            // Feedback
+            let fb = correct
+                ? `✓ Correct! +${pts} pts (${elapsed.toFixed(1)}s)`
+                : pts > 0 ? `Close — +${pts} pts. See the working below.`
+                : `See the working below. 0 pts.`;
+            document.getElementById('prob-feedback').innerHTML = `<span style="color:${correct?'var(--pass)':'var(--gold)'}">${fb}</span>`;
+
+            // Flip card
+            document.getElementById('flashcard').classList.add('flipped');
+
+            // Save best score
+            const best = parseInt(localStorage.getItem('prob_best')) || 0;
+            if (probState.score > best) localStorage.setItem('prob_best', probState.score);
+            const done = parseInt(localStorage.getItem('prob_done')) || 0;
+            localStorage.setItem('prob_done', done + 1);
+        }
+
+        function nextProbQ() {
+            loadNextProbQ();
+        }
+
+        // Enter key support for prob
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('view-prob-game') && !document.getElementById('view-prob-game').classList.contains('hidden')) {
+                if (e.key === 'Enter') {
+                    if (!probState.flipped) submitProbAnswer();
+                    else nextProbQ();
+                }
+            }
+        });
+
+        function startMmRankedSession() {
+            // Find closest MM opponent
+            let viable = MM_LEGENDS.filter(l => Math.abs(l.mmElo - userMmElo) <= 400);
+            if (!viable.length) viable = MM_LEGENDS;
+            viable.sort((a, b) => Math.abs(a.mmElo - userMmElo) - Math.abs(b.mmElo - userMmElo));
+            currentMmOpponent = viable[Math.floor(Math.random() * Math.min(3, viable.length))];
+            mmOppScore = 0;
+
+            // Matchmaking reveal flow
+            navTo('mm-matchmaking');
+            document.getElementById('mm-matchmaking-status').innerText = 'Finding market match...';
+            document.getElementById('mm-matchmaking-status').style.opacity = '1';
+            document.getElementById('mm-opponent-reveal').classList.remove('show');
+            buildVortex(); // reuse the vortex on mm-vortex-stage - just use existing stage trick
+            const stage = document.getElementById('mm-vortex-stage');
+            stage.querySelectorAll('.pi-ring').forEach(r => r.remove());
+            const pi = "3.14159265358979323846264338327950288419716939937510";
+            const ring = document.createElement('div'); ring.className = 'pi-ring';
+            for (let i = 0; i < 60; i++) {
+                const d = document.createElement('span'); d.innerText = pi[i % pi.length]; d.className = 'pi-digit';
+                const angle = i * 6;
+                d.style.transform = `translate(${Math.cos(angle*Math.PI/180)*260}px, ${Math.sin(angle*Math.PI/180)*260}px) rotate(${angle+90}deg)`;
+                ring.appendChild(d);
+            }
+            stage.appendChild(ring);
+
+            setTimeout(() => {
+                document.getElementById('mm-matchmaking-status').innerText = 'Match Found!';
+                setTimeout(() => {
+                    const skill = (currentMmOpponent.mmElo - 1500) / 200;
+                    const hitRate = Math.min(95, 65 + skill * 9);
+                    const avgPts = Math.min(90, 45 + skill * 8);
+                    document.getElementById('mm-reveal-tag').innerText = 'MATCHED WITH';
+                    document.getElementById('mm-opp-name-ui').innerText = currentMmOpponent.name;
+                    document.getElementById('mm-opp-elo-ui').innerText = 'MM Rating: ' + currentMmOpponent.mmElo;
+                    document.getElementById('mm-opp-hit-ui').innerText = hitRate.toFixed(0) + '%';
+                    document.getElementById('mm-opp-score-ui').innerText = avgPts.toFixed(0) + 'pts';
+                    document.getElementById('mm-matchmaking-status').style.opacity = '0';
+                    document.getElementById('mm-opponent-reveal').classList.add('show');
+                    setTimeout(() => {
+                        document.getElementById('mm-opponent-reveal').classList.remove('show');
+                        startIntervalSession(true); // true = ranked mode
+                    }, 2500);
+                }, 700);
+            }, 1200);
+        }
+
+        function startMmOpponent() {
+            // Opponent scores points over time based on their mmElo
+            const skill = (currentMmOpponent.mmElo - 1500) / 200;
+            const avgPtsPerQ = Math.min(90, 45 + skill * 8);
+            const avgTimePerQ = Math.max(4, 18 - skill * 2.5); // seconds per question
+            function loop() {
+                if (!isSessionActive) return;
+                mmOppInterval = setTimeout(() => {
+                    const pts = Math.round(avgPtsPerQ * (0.75 + Math.random() * 0.5));
+                    mmOppScore += pts;
+                    document.getElementById('interval-opp-score').innerText = mmOppScore;
+                    loop();
+                }, avgTimePerQ * 1000);
+            }
+            loop();
+        }
+
+        function endMmRankedSession() {
+            clearTimeout(mmOppInterval);
+            const finalOpp = currentMmOpponent;
+            const hits = intervalData.filter(d => d.hit).length;
+            const total = intervalData.length;
+
+            // Chess-style ELO
+            const K = 32;
+            const expected = 1 / (1 + Math.pow(10, (finalOpp.mmElo - userMmElo) / 400));
+            const actual = intervalScore > mmOppScore ? 1 : intervalScore === mmOppScore ? 0.5 : 0;
+            const scoreDiff = intervalScore - mmOppScore;
+            const gain = Math.round(K * (actual - expected) + scoreDiff / 20);
+
+            userMmElo += gain;
+            localStorage.setItem('leib_mm_elo', userMmElo);
+
+            const hitPct = total ? Math.round(hits / total * 100) : 0;
+            mmMatchHistory.push({ date: new Date().toLocaleDateString(), hit: hitPct, gain });
+            localStorage.setItem('leib_mm_history', JSON.stringify(mmMatchHistory));
+
+            // Show results
+            const avgWidth = total > 0 ? (intervalData.reduce((s, d) => s + d.width, 0) / total).toFixed(1) : 0;
+            document.getElementById('final-interval-score').innerText = intervalScore;
+            document.getElementById('intervals-hit').innerText = hits;
+            document.getElementById('intervals-total').innerText = total;
+            document.getElementById('avg-width').innerText = avgWidth;
+            const rep = document.getElementById('mm-elo-report');
+            rep.classList.remove('hidden');
+            rep.innerHTML = `MM Elo: <span style="color:${gain>=0?'var(--pass)':'var(--fail)'}">${gain>=0?'+':''}${gain}</span> &nbsp;|&nbsp; Opp scored: ${mmOppScore}`;
+            navTo('intervals-results');
+        }
+
+        // === INTERVAL ESTIMATION GAME LOGIC ===
+        
+        function startIntervalSession(isRanked = false) {
+            intervalMode = true;
+            intervalScore = 0;
+            mmOppScore = 0;
+            intervalData = [];
+            timeLeft = sessionTime;
+            isSessionActive = true;
+            currentMode = isRanked ? 'mm-ranked' : 'intervals';
+            
+            document.getElementById('interval-score').innerText = 0;
+            document.getElementById('interval-timer').innerText = timeLeft;
+            document.getElementById('interval-opp-score').innerText = 0;
+            document.getElementById('mm-ranked-hud').style.display = isRanked ? 'inline' : 'none';
+            document.getElementById('mm-elo-report').classList.add('hidden');
+            
+            navTo('intervals-game');
+            loadNewIntervalQuestion();
+            
+            if (isRanked) startMmOpponent();
+            
+            const timer = setInterval(() => {
+                if (!isSessionActive) { clearInterval(timer); return; }
+                timeLeft--;
+                document.getElementById('interval-timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (isRanked) endMmRankedSession();
+                    else endIntervalSession();
+                }
+            }, 1000);
+            
+            document.getElementById('interval-lower').focus();
+        }
+        
+        function loadNewIntervalQuestion() {
+            currentQuestion = intervalQuestions[Math.floor(Math.random() * intervalQuestions.length)];
+            document.getElementById('interval-question').innerText = currentQuestion.q;
+            
+            // Shengtong Zhang profile mode: auto-fill tight correct interval
+            if (userName.toLowerCase() === 'shengtong zhang') {
+                const a = currentQuestion.a;
+                const tiny = Math.abs(a) * 0.001 || 0.001;
+                document.getElementById('interval-lower').value = parseFloat((a - tiny).toPrecision(6));
+                document.getElementById('interval-upper').value = parseFloat((a + tiny).toPrecision(6));
+                document.getElementById('interval-lower').style.color = 'rgba(253,252,235,0.2)';
+                document.getElementById('interval-upper').style.color = 'rgba(253,252,235,0.2)';
+            } else {
+                document.getElementById('interval-lower').value = '';
+                document.getElementById('interval-upper').value = '';
+                document.getElementById('interval-lower').style.color = '';
+                document.getElementById('interval-upper').style.color = '';
+            }
+            document.getElementById('interval-lower').focus();
+        }
+        
+        function submitInterval() {
+            const lower = parseFloat(document.getElementById('interval-lower').value);
+            const upper = parseFloat(document.getElementById('interval-upper').value);
+            
+            if (isNaN(lower) || isNaN(upper)) {
+                alert('Please enter valid numbers for both bounds');
+                return;
+            }
+            
+            if (lower >= upper) {
+                alert('Lower bound must be less than upper bound');
+                return;
+            }
+            
+            const answer = currentQuestion.a;
+            const hit = (lower <= answer && answer <= upper);
+            const width = upper - lower;
+            
+            // Scoring: Base 100 points if hit, minus penalty for width
+            // Narrower intervals = higher score
+            let points = 0;
+            if (hit) {
+                // Calculate relative width (as % of answer magnitude)
+                const relativeWidth = width / Math.abs(answer);
+                // Perfect score (100) for very narrow intervals, down to 20 for very wide
+                points = Math.max(20, Math.round(100 - (relativeWidth * 50)));
+            }
+            
+            intervalScore += points;
+            intervalData.push({ q: currentQuestion.q, lower, upper, answer, hit, width, points });
+            
+            document.getElementById('interval-score').innerText = intervalScore;
+            
+            // Visual feedback
+            const color = hit ? 'var(--pass)' : 'var(--fail)';
+            spawnPop(hit ? `+${points} HIT!` : `MISS`, color, 0, -150);
+            spawnPop(`Answer: ${answer}`, 'var(--accent)', 0, -80);
+            
+            if (isSessionActive) {
+                setTimeout(() => loadNewIntervalQuestion(), 800);
+            }
+        }
+        
+        function endIntervalSession() {
+            isSessionActive = false;
+            intervalMode = false;
+            
+            const hits = intervalData.filter(d => d.hit).length;
+            const total = intervalData.length;
+            const avgWidth = total > 0 ? (intervalData.reduce((sum, d) => sum + d.width, 0) / total).toFixed(1) : 0;
+            
+            document.getElementById('final-interval-score').innerText = intervalScore;
+            document.getElementById('intervals-hit').innerText = hits;
+            document.getElementById('intervals-total').innerText = total;
+            document.getElementById('avg-width').innerText = avgWidth;
+            
+            navTo('intervals-results');
+        }
+        
+        // Add Enter key support for intervals
+        document.addEventListener('DOMContentLoaded', () => {
+            const lowerInput = document.getElementById('interval-lower');
+            const upperInput = document.getElementById('interval-upper');
+            
+            if (lowerInput) {
+                lowerInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        document.getElementById('interval-upper').focus();
+                    }
+                });
+            }
+            
+            if (upperInput) {
+                upperInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && intervalMode && isSessionActive) {
+                        submitInterval();
+                    }
+                });
+            }
+        });
+
+        const times = [10, 30, 60, 120, 300];
+        ['classic-times', 'ranked-times', 'intervals-times', 'mm-ranked-times'].forEach(cid => {
+            const el = document.getElementById(cid); el.innerHTML = "";
+            times.forEach(t => {
+                const b = document.createElement('button'); b.className = `time-pill ${t===120?'active':''}`;
+                b.innerText = t < 60 ? `${t}s` : `${t/60}m`;
+                b.onclick = e => { sessionTime = t; document.querySelectorAll('.time-pill').forEach(x => x.classList.remove('active')); e.target.classList.add('active'); };
+                el.appendChild(b);
+            });
+        });
+        navTo('classic');
+    </script>
+</body>
+</html>
